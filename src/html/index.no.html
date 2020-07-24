@@ -967,50 +967,16 @@
 </body>
 </html>
 <script>
-$(function(){
-    //一。商品分类
-    $.get('/api/v1/category/index.jsp',{},res=>{
-        console.log(res)
-        let html=''
-        $.each(res.data,(index,oneItem)=>{
-            html+=`
-            <div class="cat item1">
-                    <h3><a href="">${oneItem.cat_name}</a> <b></b></h3>
-                    <div class="cat_detail">`
-                        $.each(oneItem.children,(index,twoItem)=>{
-                            html+=`
-                            <dl class="dl_1st">
-                                <dt><a href="">${twoItem.cat_name}</a></dt>
-                                <dd>`
-                                    $.each(twoItem.children,(index,threeItem)=>{
-                                        html+=`<a href="">${threeItem.cat_name}</a>`
-                                    })				
-                                html+=`</dd>
-                            </dl>`
-                        })
-                    html+=`</div>
-                </div>`
-        })
-        $('.cat_bd').html(html)
-    },'json')
-    //猜你喜欢loading
-    let img = Math.floor(Math.random() * (10-1+1)+1)
-$('.goodslist ul').html(`<img src="../images/loading${img}.gif" />`)
-    //一,猜你喜欢
-    $.get('/api/v1/goods/like.jsp',{},res=>{
-        let html=''
-        $.each(res.data,(index,item)=>{
-            html+=`
-                    <li>
-                        <dl>
-                            <dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
-                            <dd><a href="">${item.goods_name}</a></dd>
-                            <dd><span>售价：</span> <strong>￥${item.shop_price}</strong></dd>
-                        </dl>
-                    </li>
-            `
-        })
-        $('.goodslist ul').html(html)
-    },'json')
+$.ajax({
+	url: '/api?ip=122.192.9.122&accessKey=alibaba-inc',
+	data: {},
+	type: 'get',
+	dataType: 'json',
+	success: function(res) {
+		console.log(res)
+	},
+	error: function(err) {
+		console.log(err)
+	}
 })
 </script> 
