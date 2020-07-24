@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
+<head>   
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>商品列表页</title>
 	<link rel="stylesheet" href="../style/base.css" type="text/css">
@@ -14,6 +14,7 @@
 	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 	<script type="text/javascript" src="../js/header.js"></script>
 	<script type="text/javascript" src="../js/list.js"></script>
+	<script type="text/javascript" src="../js/utils.js"></script>
 </head>
 <body>
 	<!-- 顶部导航 start -->
@@ -47,8 +48,8 @@
 			<div class="search fl">
 				<div class="search_form">
 					<div class="form_left fl"></div>
-					<form action="" name="serarch" method="get" class="fl">
-						<input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
+					<form action="./list.html" name="serarch" method="get" class="fl">
+						<input type="text" name="k" class="txt" placeholder="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
 					</form>
 					<div class="form_right fl"></div>
 				</div>
@@ -556,62 +557,9 @@
 	
 		<!-- 列表内容 start -->
 		<div class="list_bd fl ml10 mt10">
-			<!-- 热卖、促销 start -->
-			<div class="list_top">
-				<!-- 热卖推荐 start -->
-				<div class="hotsale fl">
-					<h2><strong><span class="none">热卖推荐</span></strong></h2>
-					<ul>
-						<li>
-							<dl>
-								<dt><a href=""><img src="../images/hpG4.jpg" alt="" /></a></dt>
-								<dd class="name"><a href="">惠普G4-1332TX 14英寸笔记本电脑 （i5-2450M 2G 5</a></dd>
-								<dd class="price">特价：<strong>￥2999.00</strong></dd>
-								<dd class="buy"><span>立即抢购</span></dd>
-							</dl>
-						</li>
 
-						<li>
-							<dl>
-								<dt><a href=""><img src="../images/list_hot3.jpg" alt="" /></a></dt>
-								<dd class="name"><a href="">ThinkPad E42014英寸笔记本电脑</a></dd>
-								<dd class="price">特价：<strong>￥4199.00</strong></dd>
-								<dd class="buy"><span>立即抢购</span></dd>
-							</dl>
-						</li>
-
-						<li>
-							<dl>
-								<dt><a href=""><img src="../images/acer4739.jpg" alt="" /></a></dt>
-								<dd class="name"><a href="">宏碁AS4739-382G32Mnkk 14英寸笔记本电脑</a></dd>
-								<dd class="price">特价：<strong>￥2799.00</strong></dd>
-								<dd class="buy"><span>立即抢购</span></dd>
-							</dl>
-						</li>
-					</ul>
-				</div>
-				<!-- 热卖推荐 end -->
-
-				<!-- 促销活动 start -->
-				<div class="promote fl">
-					<h2><strong><span class="none">促销活动</span></strong></h2>
-					<ul>
-						<li><b>.</b><a href="">DIY装机之向雷锋同志学习！</a></li>
-						<li><b>.</b><a href="">京东宏碁联合促销送好礼！</a></li>
-						<li><b>.</b><a href="">台式机笔记本三月巨惠！</a></li>
-						<li><b>.</b><a href="">富勒A53g智能人手识别鼠标</a></li>
-						<li><b>.</b><a href="">希捷硬盘白色情人节专场</a></li>
-					</ul>
-
-				</div>
-				<!-- 促销活动 end -->
-			</div>
-			<!-- 热卖、促销 end -->
-			
-			<div style="clear:both;"></div>
-			
 			<!-- 商品筛选 start -->
-			<div class="filter mt10">
+			<div class="filter ">
 				<h2><a href="">重置筛选条件</a> <strong>商品筛选</strong></h2>
 				<div class="filter_wrap">
 					<dl>
@@ -859,7 +807,119 @@
 		</p>
 	</div>
 	<!-- 底部版权 end -->
-
-
 </body>
 </html>
+
+
+<script>
+$(function(){
+	// 【### 一、列表数据
+	// 默认页码
+	let pageno = 1
+	let pagesize = 8
+	let pagetotal = 0
+	let keywords = getParams('k')
+	let cat = getParams('cat')
+
+	// 默认打开页面获取数据
+	getListGoods()
+	// 点击分页获取数据
+	$('.list_bd .page').on('click', 'a', function(e) {
+		let eObj = e || window.event
+		let val = $(eObj.target).text()
+		
+		// 更改页码
+		switch (val)
+		{
+			case '首页':
+				pageno = 1
+				break;
+			case '上一页':
+				pageno--
+				if (pageno<1) pageno=1
+				break;
+			case '下一页':
+				pageno++
+				if (pageno>pagetotal) pageno=parseInt(pagetotal)
+				break;
+			case '尾页':
+				pageno=parseInt(pagetotal)
+				break;
+			case '确定':
+				pageno=$('.page_num').val()
+				break;
+			default:
+				pageno=parseInt(val)
+		}
+		// 重新发送请求
+		getListGoods() 
+	})
+
+	// 获取数据方法
+	function getListGoods() 
+	{
+		// 显示loading
+		$(`.goodslist ul`).html(`<div style="text-align:center;padding-top:100px;height:200px;"><img height="200" src="../images/${loading()}" /></div>`)
+		$('.list_bd .page').html(``)
+		// 发送请求
+		$.get('/api/v1/goods/index.jsp', {pageno, pagesize, keywords, cat}, res => {
+			// #1 显示数据
+			let html = `` 
+			$.each(res.data.list, (index, item) => {
+				html += `
+					<li>
+						<dl>
+							<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
+							<dd><a href="">${item.goods_name}</a></dt>
+							<dd><strong>￥${item.shop_price}</strong></dt>
+							<dd><a href=""><em>已有0人评价</em></a></dt>
+						</dl>
+					</li>
+				`
+			})
+			// #2 分页页码
+			let pagehtml = ''
+			pagetotal = Math.ceil(res.data.total / pagesize)
+			for (let i = 1; i<=pagetotal; i++)
+			{
+				if (pageno == i)
+				{
+					pagehtml += `<a href="javascript:;" class="cur">${i}</a>`
+				} else {
+					pagehtml += `<a href="javascript:;">${i}</a>`
+				}
+			}
+
+			// #3 放到页面中  因为搜索可能找不到  
+			if (pagetotal)
+			{
+				// 数据
+				$(`.goodslist ul`).html(`<ul>${html}</ul>`)
+				// 分页
+				$('.list_bd .page').html(`
+					<a href="javascript:;">首页</a>
+					<a href="javascript:;">上一页</a>
+					${pagehtml}
+					<a href="javascript:;">下一页</a>
+					<a href="javascript:;">尾页</a>&nbsp;&nbsp; 
+					<span>
+						<em>共${pagetotal}页&nbsp;&nbsp;到第 <input type="text" class="page_num" value=""/> 页</em>
+						<a href="javascript:;" class="skipsearch" href="javascript:;">确定</a>
+					</span>
+				`)
+			} else {
+				// 数据
+				let temp = 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3834323896,715363715&fm=26&gp=0.jpg'
+				$(`.goodslist ul`).html(`
+					<div style="text-align:center;padding-top:100px;height:200px;">
+						<img height="100" src="${temp}" />
+						<h1 style="font-size:15px;margin-top:20px;">非常抱歉，没有找到与“<span style="color:red">${keywords}</span>”相关的宝贝</h1>
+					</div>
+				`)
+				// 分页
+				$('.list_bd .page').html(``)
+			}
+		}, 'json')
+	}
+})
+</script>

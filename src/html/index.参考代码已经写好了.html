@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
+<head>   
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>京西商城</title>
 	<link rel="stylesheet" href="../style/base.css" type="text/css">
@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 	<script type="text/javascript" src="../js/header.js"></script>
 	<script type="text/javascript" src="../js/index.js"></script>
+	<script type="text/javascript" src="../js/utils.js"></script>
 </head>
 <body>
 	<!-- 顶部导航 start -->
@@ -46,8 +47,8 @@
 			<div class="search fl">
 				<div class="search_form">
 					<div class="form_left fl"></div>
-					<form action="" name="serarch" method="get" class="fl">
-						<input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
+					<form action="./list.html" name="serarch" method="get" class="fl">
+						<input type="text" name="k" class="txt" placeholder="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
 					</form>
 					<div class="form_right fl"></div>
 				</div>
@@ -966,51 +967,99 @@
 
 </body>
 </html>
+
 <script>
-$(function(){
-    //一。商品分类
-    $.get('/api/v1/category/index.jsp',{},res=>{
-        console.log(res)
-        let html=''
-        $.each(res.data,(index,oneItem)=>{
-            html+=`
-            <div class="cat item1">
-                    <h3><a href="">${oneItem.cat_name}</a> <b></b></h3>
-                    <div class="cat_detail">`
-                        $.each(oneItem.children,(index,twoItem)=>{
-                            html+=`
-                            <dl class="dl_1st">
-                                <dt><a href="">${twoItem.cat_name}</a></dt>
-                                <dd>`
-                                    $.each(twoItem.children,(index,threeItem)=>{
-                                        html+=`<a href="">${threeItem.cat_name}</a>`
-                                    })				
-                                html+=`</dd>
-                            </dl>`
-                        })
-                    html+=`</div>
-                </div>`
-        })
-        $('.cat_bd').html(html)
-    },'json')
-    //猜你喜欢loading
-    let img = Math.floor(Math.random() * (10-1+1)+1)
-$('.goodslist ul').html(`<img src="../images/loading${img}.gif" />`)
-    //一,猜你喜欢
-    $.get('/api/v1/goods/like.jsp',{},res=>{
-        let html=''
-        $.each(res.data,(index,item)=>{
-            html+=`
-                    <li>
-                        <dl>
-                            <dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
-                            <dd><a href="">${item.goods_name}</a></dd>
-                            <dd><span>售价：</span> <strong>￥${item.shop_price}</strong></dd>
-                        </dl>
-                    </li>
-            `
-        })
-        $('.goodslist ul').html(html)
-    },'json')
+$(function() {
+	// 【### 一、商品分类  一级/二级 先URL 再关键词  三级 先URL 再分类ID
+	$('.category .cat_bd').html('')
+	$.get('/api/v1/category/index.jsp', {}, res => {
+		// 遍历拼接数据
+		let html = ``
+		$.each(res.data, (index, menu) => {
+			// 一级
+			html += `<div class="cat item1">`
+				html += `<h3><a href="${menu.url ? menu.url : './list.html?k='+menu.keywords}">${menu.cat_name}</a> <b></b></h3>`
+				html += `<div class="cat_detail">`
+					// 二级
+					$.each(menu.children, (index, menu2) => {
+						html += `<dl class="dl_1st">`
+							html += `<dt><a href="${menu2.url ? menu2.url : './list.html?k='+menu2.keywords}">${menu2.cat_name}</a></dt>`
+							html += `<dd>`
+								// 三级
+								$.each(menu2.children, (index, menu3) => {
+									html += `<a href="${menu3.url ? menu3.url : './list.html?cat='+menu3.cat_id}">${menu3.cat_name}</a>`
+								})
+							html += `</dd>`
+						html += `</dl>`
+					})
+				html += `</div>`
+			html += `</div>`
+		})
+		// 放到页面中
+		$('.category .cat_bd').html(html)
+	}, 'json')
+
+	// 【### 二、热卖、推荐、新品
+	// 2.1 首次异步请求
+	getIndexGoods('hot') 
+	// 2.2 切换异步请求
+	$('.guide_content h2 span').mouseover(function(){
+		let val = $(this).text()
+		let type = ''
+		if (val === '热卖商品') type = 'hot'
+		if (val === '推荐商品') type = 'best'
+		if (val === '新品上架') type = 'new'
+		getIndexGoods(type)
+	})
+	// 热卖、推荐、新品封装请求函数
+	function getIndexGoods(type)
+	{
+		// 留心：推荐页面class不是best而是recommend
+		let className = type === 'best' ? 'recommend' : type
+		
+		// 显示loading
+		$(`.guide_wrap .${className} ul`).html(`<li><img height="200" src="../images/${loading()}" /></li>`)
+
+		// 发送请求
+		$.get('/api/v1/goods/index.jsp', {type}, res => {
+			// 遍历拼接数据
+			let html = `` 
+			$.each(res.data.list, (index, item) => {
+				html += `
+					<li>
+						<dl>
+							<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
+							<dd><a href="">${item.goods_name}</a></dd>
+							<dd><span>售价：</span><strong> ￥${item.shop_price}</strong></dd>
+						</dl>
+					</li>
+				`
+			})
+			// 放到页面中   
+			$(`.guide_wrap .${className} ul`).html(html)
+		}, 'json')
+	}
+
+	// 【### 三、猜你喜欢
+	// 显示loading
+	$(`.floor1 .goodslist div:first`).html(`<img height="400" src="../images/${loading()}" />`)
+	// 发送请求
+	$.get('/api/v1/goods/like.jsp', {}, res => {
+		// 遍历拼接数据
+		let html = `` 
+		$.each(res.data, (index, item) => {
+			html += `
+				<li>
+					<dl>
+						<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
+						<dd><a href="">${item.goods_name}</a></dd>
+						<dd><span>售价：</span><strong> ￥${item.shop_price}</strong></dd>
+					</dl>
+				</li>
+			`
+		})
+		// 放到页面中   
+		$(`.floor1 .goodslist div:first`).html(`<ul>${html}</ul>`)
+	}, 'json')
 })
 </script> 

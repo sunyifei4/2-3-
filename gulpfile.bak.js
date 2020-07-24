@@ -1,6 +1,6 @@
 // 引入GULP模块
 const gulp = require('gulp')
- 
+
 // 开发调试用 =========================
 const { createProxyMiddleware } = require('http-proxy-middleware')
 const server = require('browser-sync').create(); 
@@ -17,9 +17,10 @@ gulp.task('serve', function() {
                 // url    /api?ip=122.192.9.122&accessKey=alibaba-inc
                 // target + url  http://ip.taobao.com/outGetIpInfo/api?ip=122.192.9.122&accessKey=alibaba-inc
                 // pathRewrite replace /api替换掉了 http://ip.taobao.com/outGetIpInfo?ip=122.192.9.122&accessKey=alibaba-inc
+
                 createProxyMiddleware('/api', {
                     // 目标服务器网址
-                    target: "http://kg.zhaodashen.cn",
+                    target: "http://ip.taobao.com/outGetIpInfo",
                     changeOrigin: true, // 是否允许跨域
                     secure: false,      // 关闭SSL证书验证https协议接口需要改成true
                     pathRewrite: {      // 重写路径请求
