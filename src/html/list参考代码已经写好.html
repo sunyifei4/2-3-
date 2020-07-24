@@ -812,27 +812,114 @@
 
 
 <script>
-	$(function(){
-		//默认打开请求接口
-		$.get('/api/v1/goods/index.jsp',{pageno:1,pagesize:8},res=>{
-			//一.loading
+$(function(){
+	// 【### 一、列表数据
+	// 默认页码
+	let pageno = 1
+	let pagesize = 8
+	let pagetotal = 0
+	let keywords = getParams('k')
+	let cat = getParams('cat')
 
-			//二.数据
-			let htmlData=''
-			$.each(res.data.list,(index,item)=>{
-				htmlData+=`
-				<li>
+	// 默认打开页面获取数据
+	getListGoods()
+	// 点击分页获取数据
+	$('.list_bd .page').on('click', 'a', function(e) {
+		let eObj = e || window.event
+		let val = $(eObj.target).text()
+		
+		// 更改页码
+		switch (val)
+		{
+			case '首页':
+				pageno = 1
+				break;
+			case '上一页':
+				pageno--
+				if (pageno<1) pageno=1
+				break;
+			case '下一页':
+				pageno++
+				if (pageno>pagetotal) pageno=parseInt(pagetotal)
+				break;
+			case '尾页':
+				pageno=parseInt(pagetotal)
+				break;
+			case '确定':
+				pageno=$('.page_num').val()
+				break;
+			default:
+				pageno=parseInt(val)
+		}
+		// 重新发送请求
+		getListGoods() 
+	})
+
+	// 获取数据方法
+	function getListGoods() 
+	{
+		// 显示loading
+		$(`.goodslist ul`).html(`<div style="text-align:center;padding-top:100px;height:200px;"><img height="200" src="../images/${loading()}" /></div>`)
+		$('.list_bd .page').html(``)
+		// 发送请求
+		$.get('/api/v1/goods/index.jsp', {pageno, pagesize, keywords, cat}, res => {
+			// #1 显示数据
+			let html = `` 
+			$.each(res.data.list, (index, item) => {
+				html += `
+					<li>
 						<dl>
 							<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
 							<dd><a href="">${item.goods_name}</a></dt>
-							<dd><strong>${item.shop_price}</strong></dt>
-							<dd><a href=""><em>已有10人评价</em></a></dt>
+							<dd><strong>￥${item.shop_price}</strong></dt>
+							<dd><a href=""><em>已有0人评价</em></a></dt>
 						</dl>
 					</li>
 				`
 			})
-			$('.goodslist ul').html(htmlData)
-			//三.分页
-		},'json')
-	})
+			// #2 分页页码
+			let pagehtml = ''
+			pagetotal = Math.ceil(res.data.total / pagesize)
+			for (let i = 1; i<=pagetotal; i++)
+			{
+				if (pageno == i)
+				{
+					pagehtml += `<a href="javascript:;" class="cur">${i}</a>`
+				} else {
+					pagehtml += `<a href="javascript:;">${i}</a>`
+				}
+			}
+
+			// #3 放到页面中  因为搜索可能找不到  
+			if (pagetotal)
+			{
+				// 数据
+				$(`.goodslist ul`).html(`<ul>${html}</ul>`)
+				// 分页
+				$('.list_bd .page').html(`
+					<a href="javascript:;">首页</a>
+					<a href="javascript:;">上一页</a>
+					${pagehtml}
+					<a href="javascript:;">下一页</a>
+					<a href="javascript:;">尾页</a>&nbsp;&nbsp; 
+					<span>
+						<em>共${pagetotal}页&nbsp;&nbsp;到第 <input type="text" class="page_num" value=""/> 页</em>
+						<a href="javascript:;" class="skipsearch" href="javascript:;">确定</a>
+					</span>
+				`)
+			} else {
+				// 数据
+				let temp = 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3834323896,715363715&fm=26&gp=0.jpg'
+				$(`.goodslist ul`).html(`
+					<div style="text-align:center;padding-top:100px;height:200px;">
+						<img height="100" src="${temp}" />
+						<h1 style="font-size:15px;margin-top:20px;">非常抱歉，没有找到与“<span style="color:red">${keywords}</span>”相关的宝贝</h1>
+					</div>
+				`)
+				// 分页
+				$('.list_bd .page').html(``)
+			}
+		}, 'json')
+	}
+})
 </script>
