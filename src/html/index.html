@@ -968,6 +968,8 @@
 </html>
 <script>
 	$(function(){
+		let img = Math.floor(Math.random() * (10-1+1)+1)
+	$('.goodslist ul').html(`<img src="../images/loading${img}.gif" />`)
 		//一,猜你喜欢
 		$.get('/api/v1/goods/like.jsp',{},res=>{
 			console.log(res)
