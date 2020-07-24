@@ -966,3 +966,24 @@
 
 </body>
 </html>
+<script>
+	$(function(){
+		//一,猜你喜欢
+		$.get('/api/v1/goods/like.jsp',{},res=>{
+			console.log(res)
+			let html=''
+			$.each(res.data,(index,item)=>{
+				html+=`
+						<li>
+							<dl>
+								<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
+								<dd><a href="">${item.goods_name}</a></dd>
+								<dd><span>售价：</span> <strong>￥${item.shop_price}</strong></dd>
+							</dl>
+						</li>
+				`
+			})
+			$('.goodslist ul').html(html)
+		},'json')
+	})
+</script>
