@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="../style/header.css" type="text/css">
 	<link rel="stylesheet" href="../style/login.css" type="text/css">
 	<link rel="stylesheet" href="../style/footer.css" type="text/css">
+	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 </head>
 <body>
 	<!-- 顶部导航 start -->
@@ -62,8 +63,15 @@
 						<li class="checkcode">
 							<label for="">验证码：</label>
 							<input type="text"  name="checkcode" />
-							<img src="../images/checkcode1.jpg" alt="" />
-							<span>看不清？<a href="">换一张</a></span>
+							<img src="http://kg.zhaodashen.cn/v1/public/captcha.jsp" alt="" />
+							<span>看不清？<a href="javascript:;">换一张</a></span>
+							<script>
+								$(function(){
+									$('.checkcode span').click(function(){
+										$('.checkcode img').attr('src',`http://kg.zhaodashen.cn/v1/public/captcha.jsp?t=`+(new Date).getTime())
+									})
+								})
+							</script>
 						</li>
 						<li>
 							<label for="">&nbsp;</label>
@@ -131,3 +139,46 @@
 
 </body>
 </html>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+	$(function(){
+		$('form').submit(function(e){
+			//阻止表单提交
+			let eObj=e||window.event
+			eObj.preventDefault()
+
+			//收集数据
+	let uname=$('input[name=useername]').val()
+	let pwd=$('input[name=password]').val()
+	let captcha=$('input[name=checkcode]').val()
+
+	//表单验证 jq插件
+
+	//发送异步请求
+	$.post('/api/v1/public/login.jsp',{uname,pwd,captcha},res=>{
+		if(res.meta.state==200){
+			//1.H5存储
+			localStorage.setItem('uname',res.data.uname)
+			localStorage.setItem('token',res.data.token)
+			//2.提示成功
+			swal({
+				title:'登陆成功',
+				text:'神龙教商城提示',
+				icon:"error",
+				button:"确定",
+			});
+			//3.跳转到首页
+			location.href='./index.html'
+		}else{
+			swal({
+				title:res.meta.msg,
+				text:'神龙教商城提示',
+				icon:"error",
+				button:"确定",
+			});
+		}
+	},'json')
+		})
+	})
+	
+</script>
