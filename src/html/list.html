@@ -697,9 +697,9 @@
 			<div class="page mt20">
 				<a href="">首页</a>
 				<a href="">上一页</a>
-				<a href="">1</a>
+				<a href=""class="cur">1</a>
 				<a href="">2</a>
-				<a href="" class="cur">3</a>
+				<a href="">3</a>
 				<a href="">4</a>
 				<a href="">5</a>
 				<a href="">下一页</a>
@@ -813,18 +813,61 @@
 
 <script>
 	$(function(){
-		//默认打开请求接口
-		$.get('/api/v1/goods/index.jsp',{pageno:1,pagesize:8},res=>{
+		let totalpage=0
+		let pagesize=8
+		let pageno=1
+		let keywords = getParams('k')
+
+		getListData(pageno,pagesize)
+		//分页
+		$('.page').on('click','a',function(e){
+			let eObj = e || window.event
+			eObj.preventDefault()
+			//获取标签数据
+			let val=$(this).text()
+			// console.log(val)
+
+			//判断
+			switch(val){
+				case '首页':
+					pageno=1
+					break;
+				case '上一页':
+					pageno--
+					if(pageno<1)pageno=1
+					break;
+				case '下一页':
+					pageno++
+					if(pageno>totalpage)pageno=totalpage
+					break;
+				case '尾页':
+					pageno=totalpage
+					break;
+				case '确定':
+					pageno=parseInt($('.page_num').val())
+					break;
+				default:
+					pageno=parseInt($(this).text())
+					break;
+			}
+			getListData(pageno,pagesize)
+		})
+		//获取列表数据
+		function getListData(pageno,pagesize){
+			
+			//默认打开请求接口
+		$.get('/api/v1/goods/index.jsp',{pageno,pagesize,keywords},res=>{
 			//一.loading
 
-			//二.数据
+			//二.数据			
 			let htmlData=''
 			$.each(res.data.list,(index,item)=>{
+				let newname=item.goods_name.replace(keywords,`<font color=red>${keywords}</font>`)
 				htmlData+=`
 				<li>
 						<dl>
 							<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
-							<dd><a href="">${item.goods_name}</a></dt>
+							<dd><a href="">${newname}</a></dt>
 							<dd><strong>${item.shop_price}</strong></dt>
 							<dd><a href=""><em>已有10人评价</em></a></dt>
 						</dl>
@@ -833,6 +876,45 @@
 			})
 			$('.goodslist ul').html(htmlData)
 			//三.分页
+			let htmlPage=`
+			<a href="">首页</a>
+				<a href="">上一页</a>
+			`
+			totalpage=Math.ceil(res.data.total/pagesize)
+			for (let i=1;i<=totalpage;i++){
+				if(pageno==i){
+					htmlPage+=`<a href="" class="cur">${i}</a>`
+				}else{
+					htmlPage+=`<a href="">${i}</a>`
+				}
+
+				
+			}
+			
+
+			htmlPage+=`
+				<a href="">下一页</a>
+				<a href="">尾页</a>&nbsp;&nbsp; 
+				<span>
+					<em>共${totalpage}页&nbsp;&nbsp;到第 <input type="text" class="page_num" value="1"/> 页</em>
+					<a href="" class="skipsearch" href="javascript:;">确定</a>
+				</span>
+			`
+
+				//判断是否放
+				if (res.data.total<1){
+					$('.page').html('')
+					$('.goodslist ul').html(htmlData)
+				}else{
+					$('.page').html(htmlPage)
+					$('.goodslist ul').html(htmlData)
+				}
+
+			$('.page').html(htmlPage)
 		},'json')
+
+		}
+
+		
 	})
 </script>
