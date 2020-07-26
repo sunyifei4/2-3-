@@ -133,10 +133,43 @@
 			//阻止表单提交
 			let eObj=e||window.event
 			eObj.preventDefault()
+			console.log($('input[name=password]:nth-child(2)').val())
+			console.log('login_form li input[name=password]:nth-child(1)')
+			if($('input[name=password]:nth-child(2)').val()==$('input[name=password]:nth-child(1)').val()){
+				let uname=$('input[name=username]').val()
+				let pwd=$('input[name=password]').val()
+				let captcha=$('input[name=checkcode]').val()
+				$.post('/api/v1/public/reg.jsp',{uname,pwd,captcha},res=>{
+				if(res.meta.state==201){
+					console.log(res)	
+					$.post('/api/v1/public/login.jsp',{uname,pwd,captcha},res=>{
+					if(res.meta.state==200){
+					//1.H5存储
+					localStorage.setItem('uname',res.data.uname)
+					localStorage.setItem('token',res.data.token)
+					//2.提示成功
+					swal({
+						title:'登陆成功',
+						text:'神龙教商城提示',
+						icon:"success",
+						button:"确定",
+					});
+					//3.跳转到首页
+					location.href='./index.html'
+				}
+				},'json')
+				}else{
+					swal({
+						title:res.meta.msg,
+						text:'用户已存在',
+						icon:"error",
+						button:"确定",
+					});
+				}
+			},'json')
+			}else{
+				alert('密码确认失败请确认密码')
+			}
 		})
-		let uname=$('input[name=username]').val()
-		let pwd=$('input[name=password]').val()
-		let captcha=$('input[name=checkcode]').val()
-		console.log(uname,pwd)
 	})
 </script>
