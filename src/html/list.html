@@ -844,7 +844,11 @@
 					pageno=totalpage
 					break;
 				case '确定':
-					pageno=parseInt($('.page_num').val())
+					if(parseInt($('.page_num').val())>totalpage){
+						pageno=totalpage
+					}else{
+						pageno=parseInt($('.page_num').val())
+					}
 					break;
 				default:
 					pageno=parseInt($(this).text())
@@ -857,6 +861,7 @@
 			
 			//默认打开请求接口
 		$.get('/api/v1/goods/index.jsp',{pageno,pagesize,keywords},res=>{
+			console.log(res)
 			//一.loading
 
 			//二.数据			
@@ -866,10 +871,10 @@
 				htmlData+=`
 				<li>
 						<dl>
-							<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
-							<dd><a href="">${newname}</a></dt>
+							<dt><a href="./goods.html?a=${item.goods_id}"><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
+							<dd><a href="./goods.html?a=${item.goods_id}">${newname}</a></dt>
 							<dd><strong>${item.shop_price}</strong></dt>
-							<dd><a href=""><em>已有10人评价</em></a></dt>
+							<dd><a href="./goods.html?a=${item.goods_id}"><em>已有10人评价</em></a></dt>
 						</dl>
 					</li>
 				`
@@ -914,7 +919,5 @@
 		},'json')
 
 		}
-
-		
 	})
 </script>

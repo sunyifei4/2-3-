@@ -148,14 +148,15 @@
 			eObj.preventDefault()
 
 			//收集数据
-	let uname=$('input[name=useername]').val()
+	let uname=$('input[name=username]').val()
 	let pwd=$('input[name=password]').val()
 	let captcha=$('input[name=checkcode]').val()
-
+	console.log(uname,pwd)
 	//表单验证 jq插件
 
 	//发送异步请求
 	$.post('/api/v1/public/login.jsp',{uname,pwd,captcha},res=>{
+		console.log(res)
 		if(res.meta.state==200){
 			//1.H5存储
 			localStorage.setItem('uname',res.data.uname)
@@ -164,7 +165,7 @@
 			swal({
 				title:'登陆成功',
 				text:'神龙教商城提示',
-				icon:"error",
+				icon:"success",
 				button:"确定",
 			});
 			//3.跳转到首页
