@@ -1442,9 +1442,8 @@
 								},'json')
 						$.post('/api/v1/cart/create.jsp',{goodsId,buyNum,token},res=>{//请求购物车接口传递参数
 							if(res.meta.state==201){//当成功并创建新文件时提示信息并跳转到购物车页面
-								alert('加入成功')
-								console.log('/////////2')
-								location.href='./flow1.html'
+								let t=confirm('加入成功')
+								if(t==true){location.href='./flow1.html'}
 							}else{
 								alert(res.meta.msg)
 							}

@@ -188,6 +188,9 @@
 				
 			}
 		},'json')
+		let z=$(this).parent().prev().text()
+		zjjg-=parseInt(z.substr(1,z.length))
+	$('#total').text(zjjg)
 	})
 
 	$('tbody').on("click",".add_num",function(){
