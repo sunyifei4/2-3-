@@ -24,7 +24,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -79,9 +79,9 @@
 						</div>
 						<div class="uclist mt10">
 							<ul class="list1 fl">
-								<li><a href="">用户信息></a></li>
-								<li><a href="">我的订单></a></li>
-								<li><a href="">收货地址></a></li>
+								<li><a href="./user.html">用户信息></a></li>
+								<li><a href="./order.html">我的订单></a></li>
+								<li><a href="./address.html">收货地址></a></li>
 								<li><a href="">我的收藏></a></li>
 							</ul>
 
@@ -111,7 +111,7 @@
 			<div class="cart fl">
 				<dl>
 					<dt>
-						<a href="">去购物车结算</a>
+						<a href="./flow1.html">去购物车结算</a>
 						<b></b>
 					</dt>
 					<dd>
@@ -443,11 +443,11 @@
 
 				<dl>
 					<dt>账户中心 <b></b></dt>
-					<dd><b>.</b><a href="">账户信息</a></dd>
+					<dd><b>.</b><a href="./user.html">账户信息</a></dd>
 					<dd><b>.</b><a href="">账户余额</a></dd>
 					<dd><b>.</b><a href="">消费记录</a></dd>
 					<dd><b>.</b><a href="">我的积分</a></dd>
-					<dd><b>.</b><a href="">收货地址</a></dd>
+					<dd><b>.</b><a href="./address.html">收货地址</a></dd>
 				</dl>
 
 				<dl>
@@ -626,3 +626,40 @@
 	<!-- 底部版权 end -->
 </body>
 </html>
+<script src='../js/登录样式.js'></script>
+<script src='../js/商品分类.js'></script>
+<script>
+	$(function(){
+		let token=localStorage.getItem('token')
+		$.get('/api/v1/order/index.jsp',{delete:2,token},res=>{
+			let html=''
+			console.log(res)
+			$.each(res.data,(index,item)=>{
+				html+=`
+				<tr>
+					<td><a href="">${item.order_id}</a></td>
+					<td><a href=""><img src="../images/order1.jpg" alt="" /></a></td>
+					<td>${item.consignee}</td>
+					<td>￥${item.goods_amount} 货到付款</td>
+					<td>${item.confirm_time_name}</td>
+					<td>已取消</td>
+					<td><a href="" com="快递公司" no="快递单号" >查看物流</a> | <a class='zhyg' name='${item.order_id}' href="">删除</a></td>
+				</tr>
+				`
+			})
+			$('.orders tbody').html(html)
+		},'json')
+		$('.orders tbody').on('click','a[class=zhyg]',function(e){
+			let eObj=e||window.event
+			eObj.preventDefault()
+			let orderId=$(this).attr('name')
+			console.log(orderId)
+			$.post('/api/v1/order/delete.jsp',{token,orderId},res=>{
+				console.log(res)
+				if(res.meta.state==200){
+					$(this).parents('tr').remove()
+				}
+			},'json')
+		})
+	})
+</script>

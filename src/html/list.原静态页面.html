@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="../style/common.css" type="text/css">
 	<link rel="stylesheet" href="../style/bottomnav.css" type="text/css">
 	<link rel="stylesheet" href="../style/footer.css" type="text/css">
-	
+	 
 	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 	<script type="text/javascript" src="../js/header.js"></script>
 	<script type="text/javascript" src="../js/list.js"></script>
@@ -25,7 +25,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
+					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -80,9 +80,9 @@
 						</div>
 						<div class="uclist mt10">
 							<ul class="list1 fl">
-								<li><a href="./user.html">用户信息></a></li>
-								<li><a href="./order.html">我的订单></a></li>
-								<li><a href="./address.html">收货地址></a></li>
+								<li><a href="">用户信息></a></li>
+								<li><a href="">我的订单></a></li>
+								<li><a href="">收货地址></a></li>
 								<li><a href="">我的收藏></a></li>
 							</ul>
 
@@ -112,7 +112,7 @@
 			<div class="cart fl">
 				<dl>
 					<dt>
-						<a href="./flow1.html">去购物车结算</a>
+						<a href="">去购物车结算</a>
 						<b></b>
 					</dt>
 					<dd>
@@ -636,7 +636,7 @@
 			<!-- 商品列表 start-->
 			<div class="goodslist mt10">
 				<ul>
-					<!-- <li>
+					<li>
 						<dl>
 							<dt><a href=""><img src="../images/goods1.jpg" alt="" /></a></dt>
 							<dd><a href="">清华同方精锐X2 台式电脑（双核E3500 2G 500G DVD 键鼠）带20英寸显示器</a></dt>
@@ -688,18 +688,18 @@
 							<dd><strong>￥2999.00</strong></dd>
 							<dd><a href=""><em>已有22人评价</em></a></dd>
 						</dl>
-					</li> -->
+					</li>
 				</ul>
 			</div>
 			<!-- 商品列表 end-->
 
 			<!-- 分页信息 start -->
 			<div class="page mt20">
-				<a href="">首页</a>
+				<!-- <a href="">首页</a>
 				<a href="">上一页</a>
-				<a href=""class="cur">1</a>
+				<a href="">1</a>
 				<a href="">2</a>
-				<a href="">3</a>
+				<a href="" class="cur">3</a>
 				<a href="">4</a>
 				<a href="">5</a>
 				<a href="">下一页</a>
@@ -707,7 +707,7 @@
 				<span>
 					<em>共8页&nbsp;&nbsp;到第 <input type="text" class="page_num" value="3"/> 页</em>
 					<a href="" class="skipsearch" href="javascript:;">确定</a>
-				</span>
+				</span> -->
 			</div>
 			<!-- 分页信息 end -->
 
@@ -809,124 +809,3 @@
 	<!-- 底部版权 end -->
 </body>
 </html>
-
-<script src="../js/登录样式.js"></script>
-<script>
-	$(function(){
-		let pagessize=0
-		let totalspage=0
-		let totalpage=0
-		let pagesize=8
-		let pageno=1
-		let keywords = getParams('k')
-
-		getListData(pageno,pagesize)
-		//分页
-		$('.page').on('click','a',function(e){
-			let eObj = e || window.event
-			eObj.preventDefault()
-			//获取标签数据
-			let val=$(this).text()
-			// console.log(val)
-
-			//判断
-			switch(val){
-				case '首页':
-					pageno=1
-					break;
-				case '上一页':
-					pageno--
-					if(pageno<1)pageno=1
-					break;
-				case '下一页':
-					pageno++
-					if(pageno>totalpage)pageno=totalpage
-					break;
-				case '尾页':
-					pageno=totalpage
-					break;
-				case '确定':
-					if(parseInt($('.page_num').val())>totalpage){
-						pageno=totalpage
-					}else{
-						pageno=parseInt($('.page_num').val())
-					}
-					break;
-				default:
-					pageno=parseInt($(this).text())
-					break;
-			}
-			getListData(pageno,pagesize)
-		})
-		//获取列表数据
-		function getListData(pageno,pagesize){
-			
-			//默认打开请求接口
-		$.get('/api/v1/goods/index.jsp',{pageno,pagesize,keywords},res=>{
-			console.log(res)
-			//一.loading
-
-			//二.数据			
-			let htmlData=''
-			$.each(res.data.list,(index,item)=>{
-				let newname=item.goods_name.replace(keywords,`<font color=red>${keywords}</font>`)
-				htmlData+=`
-					<li name='${item.goods_id}'>
-						<dl>
-							<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
-							<dd><a href="">${newname}</a></dt>
-							<dd><strong>${item.shop_price}</strong></dt>
-							<dd><a href=""><em>已有10人评价</em></a></dt>
-						</dl>
-					</li>
-				`
-			})
-			$('.goodslist ul').html(htmlData)
-			//三.分页
-			let htmlPage=`
-			<a href="">首页</a>
-				<a href="">上一页</a>
-			`
-			localStorage.setItem('zys',res.data.total)
-			totalpage=Math.ceil(res.data.total/pagesize)
-			for (let i=1;i<=totalpage;i++){
-				if(pageno==i){
-					htmlPage+=`<a href="" class="cur">${i}</a>`
-				}else{
-					htmlPage+=`<a href="">${i}</a>`
-				}
-
-				
-			}
-			
-
-			htmlPage+=`
-				<a href="">下一页</a>
-				<a href="">尾页</a>&nbsp;&nbsp; 
-				<span>
-					<em>共${totalpage}页&nbsp;&nbsp;到第 <input type="text" class="page_num" value="1"/> 页</em>
-					<a href="" class="skipsearch" href="javascript:;">确定</a>
-				</span>
-			`
-
-				//判断是否放
-				if (res.data.total<1){
-					$('.page').html('')
-					$('.goodslist ul').html('没有找到相关宝贝')
-				}else{
-					$('.page').html(htmlPage)
-					$('.goodslist ul').html(htmlData)
-				}
-
-			$('.page').html(htmlPage)
-		},'json')
-		$('.goodslist  ul').on('click','a',function(e){
-			let eObj=e||window.event
-			eObj.preventDefault()
-			localStorage.setItem('goodsId',$(this).parents('li').attr('name'))
-			window.location.href='./goods.html'
-		})
-		}
-	})
-</script>
-<script src="../js/商品侧列.js"></script>

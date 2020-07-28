@@ -19,7 +19,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -49,7 +49,7 @@
 		</div>
 		<div class="login_bd">
 			<div class="login_form fl">
-				<form action="" method="post">
+				<form action="" method="post" class="yf_form">
 					<ul>
 						<li>
 							<label for="">用户名：</label>
@@ -58,12 +58,12 @@
 						</li>
 						<li>
 							<label for="">密码：</label>
-							<input type="password" class="txt" name="password" />
+							<input type="password" class="txt yf_pwd1" name="password" />
 							<p>6-20位字符，可使用字母、数字和符号的组合，不建议使用纯数字、纯字母、纯符号</p>
 						</li>
 						<li>
 							<label for="">确认密码：</label>
-							<input type="password" class="txt" name="password" />
+							<input type="password" class="txt yf_pwd2" name="password" />
 							<p> <span>请再次输入密码</p>
 						</li>
 						<li class="checkcode">
@@ -87,7 +87,7 @@
 			</div>
 			
 			<div class="mobile fl">
-				<h3>手机快速注册</h3>			
+				<a href="./regist2.html"><h3>手机快速注册</h3></a>
 				<p>中国大陆手机用户，编辑短信 “<strong>XX</strong>”发送到：</p>
 				<p><strong>1069099988</strong></p>
 			</div>
@@ -126,18 +126,21 @@
 
 </body>
 </html>
+<script src="../js/登录样式.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
 	$(function(){
-		$('form').submit(function(e){
+		$('.yf_form').submit(function(e){
+
 			//阻止表单提交
 			let eObj=e||window.event
 			eObj.preventDefault()
-			console.log($('input[name=password]:nth-child(2)').val())
-			console.log('login_form li input[name=password]:nth-child(1)')
-			if($('input[name=password]:nth-child(2)').val()==$('input[name=password]:nth-child(1)').val()){
+			console.log(111111);
+			console.log($(".yf_pwd1").val())
+			console.log($(".yf_pwd2").val())
+			if($(".yf_pwd1").val()==$(".yf_pwd2").val()){
 				let uname=$('input[name=username]').val()
-				let pwd=$('input[name=password]').val()
+				let pwd=$('input[name=password]:nth-child(2)').val()
 				let captcha=$('input[name=checkcode]').val()
 				$.post('/api/v1/public/reg.jsp',{uname,pwd,captcha},res=>{
 				if(res.meta.state==201){

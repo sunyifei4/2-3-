@@ -447,7 +447,7 @@
 					<dd><b>.</b><a href="">账户余额</a></dd>
 					<dd><b>.</b><a href="">消费记录</a></dd>
 					<dd><b>.</b><a href="">我的积分</a></dd>
-					<dd><b>.</b><a href="">收货地址</a></dd>
+					<dd><b>.</b><a href="./address.html">收货地址</a></dd>
 				</dl>
 
 				<dl>
@@ -591,3 +591,21 @@
 	<!-- 底部版权 end -->
 </body>
 </html>
+<script src="../js/登录样式.js"></script>
+<script>
+	$(function(){
+		$('input[class=sbtn]').click(function(){
+			let uname=$('input[id=username]').val()
+			let pwd=$('input[id=pwd]').val()
+			let token=localStorage.getItem('token')
+		$.post('/api/v1/user/account.jsp',{uname,pwd,token},res=>{
+			console.log(res)
+			if(res.meta.state==200){
+				window.location.reload()
+			}else{
+				console.log(res.meta.msg)
+			}
+		},'json')
+		})
+	})
+</script>

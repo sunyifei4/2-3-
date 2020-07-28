@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="../style/index.css" type="text/css">
 	<link rel="stylesheet" href="../style/bottomnav.css" type="text/css">
 	<link rel="stylesheet" href="../style/footer.css" type="text/css">
-
+ 
 	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 	<script type="text/javascript" src="../js/header.js"></script>
 	<script type="text/javascript" src="../js/index.js"></script>
@@ -23,7 +23,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
+					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -46,7 +46,7 @@
 			<div class="search fl">
 				<div class="search_form">
 					<div class="form_left fl"></div>
-					<form action="./list.html" name="serarch" method="get" class="fl">
+					<form action="" name="serarch" method="get" class="fl">
 						<input type="text" class="txt" value="请输入商品关键字" /><input type="submit" class="btn" value="搜索" />
 					</form>
 					<div class="form_right fl"></div>
@@ -78,9 +78,9 @@
 						</div>
 						<div class="uclist mt10">
 							<ul class="list1 fl">
-								<li><a href="./user.html">用户信息></a></li>
-								<li><a href="./order.html">我的订单></a></li>
-								<li><a href="./address.html">收货地址></a></li>
+								<li><a href="">用户信息></a></li>
+								<li><a href="">我的订单></a></li>
+								<li><a href="">收货地址></a></li>
 								<li><a href="">我的收藏></a></li>
 							</ul>
 
@@ -110,7 +110,7 @@
 			<div class="cart fl">
 				<dl>
 					<dt>
-						<a href="./flow1.html">去购物车结算</a>
+						<a href="">去购物车结算</a>
 						<b></b>
 					</dt>
 					<dd>
@@ -967,89 +967,16 @@
 </body>
 </html>
 <script>
-$(function(){
-
-
-	//二，热卖商品
-
-	//hot hot
-	//best recommend
-	//new new
-	//首次打开
-	getIndexData('hot','hot')
-
-	$('.guide_content span').mouseover(function(){
-		let val=$(this).text()
-		switch(val){
-			case '热卖商品':
-				getIndexData('hot','hot')
-				break;
-				case '推荐商品':
-				getIndexData('best','recommend')
-				break;
-				case '新品上架':
-				getIndexData('new','new')
-				break;
-		}
-	})
-	
-
-
-	function getIndexData(type,className){
-				//热卖商品loading
-				let imgr = Math.floor(Math.random() * (10-1+1)+1)
-		$('.guide_wrap .hot ul').html(`<img src="../images/loading${imgr}.gif" style="height:200px" />`)
-
-
-		$.get('/api/v1/goods/index.jsp',{type},res=>{
-		let html=''
-		$.each(res.data.list,(index,item)=>{
-			html+=`
-						<li name='${item.goods_id}'>
-							<dl>
-								<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
-								<dd><a href="">${item.goods_name}</a></dd>
-								<dd><span>售价：</span><strong> ￥${item.shop_price}</strong></dd>
-							</dl>
-						</li>
-						`
-		})
-		$(`.guide_wrap .${className} ul`).html(html)
-	},'json')
+$.ajax({
+	url: '/api?ip=122.192.9.122&accessKey=alibaba-inc',
+	data: {},
+	type: 'get',
+	dataType: 'json',
+	success: function(res) {
+		console.log(res)
+	},
+	error: function(err) {
+		console.log(err)
 	}
-    //猜你喜欢loading
-    let img = Math.floor(Math.random() * (10-1+1)+1)
-$('.goodslist ul').html(`<img src="../images/loading${img}.gif" />`)
-    //一,猜你喜欢
-    $.get('/api/v1/goods/like.jsp',{},res=>{
-        let html=''
-        $.each(res.data,(index,item)=>{
-            html+=`
-                    <li name='${item.goods_id}'>
-                        <dl>
-                            <dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
-                            <dd><a href="">${item.goods_name}</a></dd>
-                            <dd><span>售价：</span> <strong>￥${item.shop_price}</strong></dd>
-                        </dl>
-                    </li>
-            `
-        })
-        $('.goodslist ul').html(html)
-	},'json')
-	$('.goodslist').on('click','a',function(e){
-			let eObj=e||window.event
-			eObj.preventDefault()
-			localStorage.setItem('goodsId',$(this).parents('li').attr('name'))
-			window.location.href='./goods.html'
-		})
-		
-		$('.hot').on('click','a',function(e){
-			let eObj=e||window.event
-			eObj.preventDefault()
-			localStorage.setItem('goodsId',$(this).parents('li').attr('name'))
-			window.location.href='./goods.html'
-		})
 })
 </script> 
-<script src="../js/登录样式.js"></script>
-<script src="../js/商品分类.js"></script>

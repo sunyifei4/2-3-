@@ -22,7 +22,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -68,8 +68,8 @@
 					<p>北京 昌平区 西三旗 建材城西路金燕龙办公楼一层 </p>
 				</div>
 
-				<div class="address_select none">
-					<ul>
+				<div class="dzaddress address_select none">
+					<ul class='d1g'>
 						<li class="cur">
 							<input type="radio" name="address" checked="checked" />王超平 北京市 昌平区 建材城西路金燕龙办公楼一层 13555555555 
 							<a href="">设为默认地址</a>
@@ -88,11 +88,11 @@
 						<ul>
 							<li>
 								<label for=""><span>*</span>收 货 人：</label>
-								<input type="text" name="" class="txt" />
+								<input type="text" name="shr" class="txt" />
 							</li>
 							<li>
 								<label for=""><span>*</span>所在地区：</label>
-								<select name="" id="">
+								<select name="yjdq" id="">
 									<option value="">请选择</option>
 									<option value="">北京</option>
 									<option value="">上海</option>
@@ -101,7 +101,7 @@
 									<option value="">武汉</option>
 								</select>
 
-								<select name="" id="">
+								<select name="ejdq" id="">
 									<option value="">请选择</option>
 									<option value="">朝阳区</option>
 									<option value="">东城区</option>
@@ -110,7 +110,7 @@
 									<option value="">昌平区</option>
 								</select>
 
-								<select name="" id="">
+								<select name="sjdq" id="">
 									<option value="">请选择</option>
 									<option value="">西二旗</option>
 									<option value="">西三旗</option>
@@ -119,11 +119,11 @@
 							</li>
 							<li>
 								<label for=""><span>*</span>详细地址：</label>
-								<input type="text" name="" class="txt address"  />
+								<input type="text" name="xxdz" class="txt address"  />
 							</li>
 							<li>
 								<label for=""><span>*</span>手机号码：</label>
-								<input type="text" name="" class="txt" />
+								<input type="text" name="sjhm" class="txt" />
 							</li>
 						</ul>
 					</form>
@@ -263,7 +263,7 @@
 						</tr>	
 					</thead>
 					<tbody>
-						<tr>
+						<!-- <tr>
 							<td class="col1"><a href=""><img src="../images/cart_goods1.jpg" alt="" /></a>  <strong><a href="">【1111购物狂欢节】惠JackJones杰克琼斯纯羊毛菱形格</a></strong></td>
 							<td class="col2"> <p>颜色：073深红</p> <p>尺码：170/92A/S</p> </td>
 							<td class="col3">￥499.00</td>
@@ -276,7 +276,7 @@
 							<td class="col3">￥1102.00</td>
 							<td class="col4">1</td>
 							<td class="col5"><span>￥1102.00</span></td>
-						</tr>
+						</tr> -->
 					</tbody>
 					<tfoot>
 						<tr>
@@ -345,3 +345,202 @@
 	<!-- 底部版权 end -->
 </body>
 </html>
+<script src="../js/登陆样式.js"></script>
+<script>
+	$(function(){
+		let address_id
+		let province
+		let city
+		let district
+		let token=localStorage.getItem('token')
+		let username
+		let address
+		let mobile
+		$('.address_info').html(`
+			<p>${localStorage.getItem('mryh')}  ${localStorage.getItem('mrdh')}</p>
+			<p>${localStorage.getItem('mrdz')}</p>
+		`)
+		$.get('/api/v1/address/index.jsp',{token},res=>{
+			console.log(res)
+			let html=''
+			html+=`<li class="cur">
+							<input type="radio" name="address" checked="checked" /> ${localStorage.getItem('mryh')} ${localStorage.getItem('mrdz')} ${localStorage.getItem('mrdh')} 
+							<a class='mrdz' href="">设为默认地址</a>
+							<a href="./address.html">编辑</a>
+							<a class='deld' href="">删除</a>
+						</li>`
+			$.each(res.data,(index,item)=>{
+				html+=`<li name='${item.address_id}'>
+							<input type="radio" name="address" checked="checked" /> ${item.consignee} ${item.provinceName+item.districtName+item.cityName} ${item.mobile} 
+							<a class='mrdz' href="">设为默认地址</a>
+							<a href="./address.html">编辑</a>
+							<a class='deld' href="">删除</a>
+						</li>
+						`
+			})
+			html+=`<li><input type="radio" name="address" class="new_address"  />使用新地址</li>`
+			$('.address_select .d1g').html(html)
+		},'json')
+		
+		//一级地区
+		$.get('/api/v1/area/index.jsp',{type:'省',pid:1},res=>{
+				yjdq='<option value="0">请选择</option>'
+				$.each(res.data,(index,item)=>{
+					yjdq+=`
+					<option value="${item.region_id}">${item.region_name}</option>
+					`
+				})
+				$('select[name=yjdq]').html(yjdq)
+			},'json')
+		//二级地区
+			$('.address_select').on('change','select[name=yjdq]',function(){
+				province=$('select[name=yjdq]').val()
+				$.get('/api/v1/area/index.jsp',{type:'市',pid:$('select[name=yjdq]').val()},res=>{
+				console.log(res)
+				yjdq='<option value="0">请选择</option>'
+				$.each(res.data,(index,item)=>{
+					yjdq+=`
+					<option value="${item.region_id}">${item.region_name}</option>
+					`
+				})
+				$('select[name=ejdq]').html(yjdq)
+			},'json')
+			})
+		//三级地区
+		$('.address_select').on('change','select[name=ejdq]',function(){
+			city=$('select[name=ejdq]').val()
+					$.get('/api/v1/area/index.jsp',{type:'区/县',pid:$('select[name=ejdq]').val()},res=>{
+					console.log(res)
+					yjdq='<option value="0">请选择</option>'
+					$.each(res.data,(index,item)=>{
+						yjdq+=`
+						<option value="${item.region_id}">${item.region_name}</option>
+						`
+					})
+					$('select[name=sjdq]').html(yjdq)
+				},'json')
+		})
+
+				$('select[name=sjdq]').change(function(){
+					district=$('select[name=sjdq]').val()
+				})
+
+				$('.dzaddress').on('click','.confirm_btn',function(e){
+			let eObj=e||window.event
+			eObj.preventDefault()
+			username=$('input[name=shr]').val()
+			address=$('input[name=xxdz]').val()
+			mobile=$('input[name=sjhm]').val()
+			console.log(token,username,address,mobile,province,city,district)
+				$.post('/api/v1/address/create.jsp',{token,username,address,mobile,province,city,district},res=>{
+				console.log(res)
+				location.reload()
+			},'json')
+		})
+
+		$('.address_select').on('click','.mrdz',function(e){
+			let eObj=e||window.event
+			eObj.preventDefault()
+			address_id=parseInt($(this).parent().attr('name'))
+			$.get('/api/v1/address/default.jsp',{token,address_id},res=>{
+				if(res.meta.state==200){
+					localStorage.setItem('mryh',($(this).parents('li').text().split(' '))[1])
+					localStorage.setItem('mrdz',($(this).parents('li').text().split(' '))[2])
+					localStorage.setItem('mrdh',($(this).parents('li').text().split(' '))[3])
+					console.log(res)
+					location.reload()
+				}else{
+					alert('设置失败')
+				}
+			},'json')
+			
+		})
+		$('.address_select').on('click','.deld',function(e){
+			let eObj=e||window.event
+			eObj.preventDefault()
+			address_id=$(this).parents('li').attr('name')
+			console.log('address_id')
+			$.post('/api/v1/address/delete.jsp',{token,address_id},res=>{
+				console.log(res)
+				location.reload()
+			},'json')
+		})
+		let yf=0
+		$('.delivery_select').on('click','a',function(e){
+			let eObj=e||window.event
+			eObj.preventDefault()
+			yf=$(this).parents('.delivery_select').find('tr[class="cur"] td:nth-child(2)').text()
+			yf=parseInt(yf.substr(1,yf.length))
+			localStorage.setItem('yf',yf)
+			location.reload()
+		})
+
+
+		$('.delivery tbody').on('click','input[type="radio"]',function(){
+			$('tbody tr').attr('class',' ')
+			$(this).parents('tr').attr('class','cur')
+		})
+		$('.pay tbody').on('click','input[type="radio"]',function(){
+			$('tbody tr').attr('class',' ')
+			$(this).parents('tr').attr('class','cur')
+		})
+	$.post('/api/v1/cart/index.jsp',{token},res=>{
+		let html = ""
+		console.log(res)
+		$.each(res.data,(index,item)=>{
+			let price = parseInt(item.goods_price)
+			let number = parseInt(item.goods_number)
+			let zongjia =price*number
+			html +=`
+						<tr goods_Id="${item.goods_id}" user_id="${item.user_id}">
+							<td class="col1"><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.imgs[0].img_url}" alt="" /></a>  <strong><a href="">${item.goods_name}</a></strong></td>
+							<td class="col2"> <p>颜色：${item.goods_attr}</p> <p>尺码：170/92A/S</p> </td>
+							<td class="col3">￥${item.goods_price}</td>
+							<td class="col4">${item.goods_number}</td>
+							<td class="col5">￥<span value='${zongjia}'>${zongjia}</span></td>
+						</tr>`
+		})
+		$('.goods tbody').html(html)
+
+		let zjjg=0
+		$.each($('.goods tbody .col5 span'),(index,item)=>{
+			let x=$(item).text()
+			zjjg+=parseInt(x)
+			console.log(zjjg)
+		})
+		console.log(yf)
+		yf=localStorage.getItem('yf')
+		$('.goods tfoot ul').html(`
+				<li>
+					<span>${$('.goods tbody .col5 span').length} 件商品，总商品金额：</span>
+					<em>￥${zjjg}</em>
+				</li>
+				<li>
+					<span>返现：</span>
+					<em>￥0.00</em>
+				</li>
+				<li>
+					<span>运费：</span>
+					<em>￥${yf}.00</em>
+				</li>
+				<li>
+					<span>应付总额：</span>
+					<em>￥${parseInt(zjjg)+parseInt(yf)}</em>
+				</li>
+			`)
+
+			$('.fillin_ft p').html(`应付总额：<strong>￥${parseInt(zjjg)+parseInt(yf)}元</strong>`)
+	}
+	,'json')
+	$('.fillin_ft').on('click','a',function(e){
+		let eObj=e||window.event
+			eObj.preventDefault()
+		$.post('/api/v1/order/create.jsp',{token},res=>{
+			console.log(res)
+			if(res.meta.state==201){
+				location.href='./flow3.html'
+			}
+		},'json')
+	})
+	})
+</script>

@@ -5,24 +5,36 @@
 */
 $(function(){
 	//收货人修改
-	$("#address_modify").click(function(){
+	$('.address').on('click','#address_modify',function(){
 		$(this).hide();
 		$(".address_info").hide();
 		$(".address_select").show();
-	});
+	})
+	// $("#address_modify").click(function(){
+	// 	$(this).hide();
+	// 	$(".address_info").hide();
+	// 	$(".address_select").show();
+	// });
 
-	$(".new_address").click(function(){
+	$('.address').on('click','.new_address',function(){
 		$("form[name=address_form]").show();
 		$(this).parent().addClass("cur").siblings().removeClass("cur");
-
 	}).parent().siblings().find("input").click(function(){
-		$("form[name=address_form]").hide();
+		// $("form[name=address_form]").hide();
 		$(this).parent().addClass("cur").siblings().removeClass("cur");
 	});
+	// $(".new_address").click(function(){
+	// 	$("form[name=address_form]").show();
+	// 	$(this).parent().addClass("cur").siblings().removeClass("cur");
+
+	// }).parent().siblings().find("input").click(function(){
+	// 	$("form[name=address_form]").hide();
+	// 	$(this).parent().addClass("cur").siblings().removeClass("cur");
+	// });
 
 	//送货方式修改
 	$("#delivery_modify").click(function(){
-		$(this).hide();
+		$(this).hide();	
 		$(".delivery_info").hide();
 		$(".delivery_select").show();
 	})

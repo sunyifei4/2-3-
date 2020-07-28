@@ -42,7 +42,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -97,9 +97,9 @@
 						</div>
 						<div class="uclist mt10">
 							<ul class="list1 fl">
-								<li><a href="">用户信息></a></li>
-								<li><a href="">我的订单></a></li>
-								<li><a href="">收货地址></a></li>
+								<li><a href="./user.html">用户信息></a></li>
+								<li><a href="./order.html">我的订单></a></li>
+								<li><a href="./address.html">收货地址></a></li>
 								<li><a href="">我的收藏></a></li>
 							</ul>
 
@@ -129,7 +129,7 @@
 			<div class="cart fl">
 				<dl>
 					<dt>
-						<a href="">去购物车结算</a>
+						<a href="./flow1.html">去购物车结算</a>
 						<b></b>
 					</dt>
 					<dd>
@@ -643,7 +643,7 @@
 					</ul>
 					<form action="" method="post" class="choose">
 						<ul>
-							<li class="product">
+							<!-- <li class="product">
 								<dl>
 									<dt>颜色：</dt>
 									<dd>
@@ -686,7 +686,7 @@
 										<input type="submit" value="" class="add_btn" />
 									</dd>
 								</dl>
-							</li>
+							</li> -->
 
 						</ul>
 					</form>
@@ -1071,19 +1071,19 @@
 	</script>
 </body>
 </html>
+<script src="../js/登录样式.js"></script>
 <script>
 	$(function(){
-		let cs1=window.location.href
-		let cs2=cs1.split('?')
-		let cs3=cs2[1].split('=')
-		let goodsId=cs3[1]
-		console.log(cs3[1])
+		let buyNum=0
+		let token=localStorage.getItem('token')
+		let goodsId=localStorage.getItem('goodsId')
+		console.log(goodsId)
 		$.get('/api/v1/goods/detail.jsp',{goodsId},res=>{
 			console.log(res)
 			let html=''
 			html+=`
 			<div class="summary">
-				<h3><strong>${res.data.keywords}</strong></h3>
+				<h3><strong>${res.data.goods_name}</strong></h3>
 				
 				<!-- 图片预览区域 start -->
 				<div class="preview fl">
@@ -1126,7 +1126,7 @@
 				<!-- 商品基本信息区域 start -->
 				<div class="goodsinfo fl ml10">
 					<ul>
-						<li><span>商品编号： </span>${res.data.brand_id}</li>
+						<li><span>商品编号： </span>${res.data.goods_id}</li>
 						<li class="market_price"><span>定价：</span><em>￥${res.data.market_price}</em></li>
 						<li class="shop_price"><span>本店价：</span> <strong>￥${res.data.shop_price}</strong> <a href="">(降价通知)</a></li>
 						<li><span>上架时间：</span>${res.data.add_time}</li>
@@ -1139,7 +1139,7 @@
 									<dt>购买数量：</dt>
 									<dd>
 										<a href="javascript:;" id="reduce_num"></a>
-										<input type="text" name="amount" value="1" class="amount"/>
+										<input type="text" name="amount" value="${res.data.warn_number}" class="amount"/>
 										<a href="javascript:;" id="add_num"></a>
 									</dd>
 								</dl>
@@ -1422,6 +1422,40 @@
 			`
 		$('.goods_content').html(html)
 		},'json')
+		$('.goods_content').on('submit','form',function(event){//给表单添加submit事件
+			let x=0
+			event.preventDefault();//阻止浏览器默认
+			$.get('/api/v1/cart/index.jsp',{token},res=>{
+							$.each(res.data,(index,item)=>{
+								if(goodsId==item.goods_id){
+									// console.log(parseInt($('.amount').val()))
+									alert('已在购物车中，请勿重复添加')
+									x+=1
+									// console.log(buyNum)
+								}
+							})
+							if(x==0){
+								buyNum=parseInt($('.amount').val())
+								$.post('/api/v1/cart/update.jsp',{goodsId,buyNum,token},res=>{
+									// console.log(buyNum)
+								},'json')
+						$.post('/api/v1/cart/create.jsp',{goodsId,buyNum,token},res=>{//请求购物车接口传递参数
+							if(res.meta.state==201){//当成功并创建新文件时提示信息并跳转到购物车页面
+								alert('加入成功')
+								console.log('/////////2')
+								location.href='./flow1.html'
+							}else{
+								alert(res.meta.msg)
+							}
+						},'json')
+							}
+					},'json')
+		})
+		$('.goods_content').on('input','.summary .goodsinfo .choose .amount',function(){
+		let val=$(this).val()
+		$(this).val(val.replace(/[^0-9]/g,''))
+	})
 	})
 	
 </script>
+<script src="../js/商品侧列.js"></script>

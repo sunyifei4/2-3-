@@ -22,7 +22,7 @@
 			</div>
 			<div class="topnav_right fr">
 				<ul>
-					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="register.html">免费注册</a>] </li>
+					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
 					<li class="line">|</li>
 					<li>我的订单</li>
 					<li class="line">|</li>
@@ -68,7 +68,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
+				<!-- <tr>
 					<td class="col1"><a href=""><img src="../images/cart_goods1.jpg" alt="" /></a>  <strong><a href="">【1111购物狂欢节】惠JackJones杰克琼斯纯羊毛菱形格</a></strong></td>
 					<td class="col2"> <p>颜色：073深红</p> <p>尺码：170/92A/S</p> </td>
 					<td class="col3">￥<span>499.00</span></td>
@@ -103,17 +103,17 @@
 					</td>
 					<td class="col5">￥<span>269.00</span></td>
 					<td class="col6"><a href="">删除</a></td>
-				</tr>
+				</tr> -->
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan="6">购物金额总计： <strong>￥ <span id="total">1870.00</span></strong></td>
+					<td colspan="6">购物金额总计： <strong>￥ <span id="total">0</span></strong></td>
 				</tr>
 			</tfoot>
 		</table>
 		<div class="cart_btn w990 bc mt10">
-			<a href="" class="continue">继续购物</a>
-			<a href="" class="checkout">结 算</a>
+			<a href="./list.html" class="continue">继续购物</a>
+			<a href="./flow2.html" class="checkout">结 算</a>
 		</div>
 	</div>
 	<!-- 主体部分 end -->
@@ -147,3 +147,136 @@
 	<!-- 底部版权 end -->
 </body>
 </html>
+<script>
+	$(function(){
+		let zjjg
+	let token = localStorage.getItem('token')
+	$.post('/api/v1/cart/index.jsp',{token:token},res=>{
+		let html = ""
+		console.log(res)
+		$.each(res.data,(index,item)=>{
+			let price = parseInt(item.goods_price)
+			let number = parseInt(item.goods_number)
+			let zongjia =price*number
+			html +=`<tr  goods_Id="${item.goods_id}" user_id="${item.user_id}">
+					<td class="col1"><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.imgs[0].img_url}" alt="" /></a>  <strong><a href="">${item.goods_name}</a></strong></td>
+					<td class="col2"> <p>颜色：${item.goods_attr}</p> <p>尺码：170/92A/S</p> </td>
+					<td class="col3">￥<span value=''>${item.goods_price}</span></td>
+					<td class="col4"> 
+						<a href="javascript:;" class="reduce_num"></a>
+						<input type="text" name="amount" value="${item.goods_number}" class="amount"/>
+						<a href="javascript:;" class="add_num"></a>
+					</td>
+					<td class="col5">￥<span value='${zongjia}'>${zongjia}</span></td>
+					<td class="col6"><a href="javascript:;" class="del">删除</a></td>
+				</tr>`
+		})
+		$('.mycart tbody').html(html)
+	}
+	,'json')
+	$('tbody').on("click",".del",function(){
+		
+		let goodsId= $(this).parents("tr").attr("goods_Id")
+		//发送异步请求
+		$.post('/api/v1/cart/delete.jsp',{goods_id:goodsId,token:token},res=>{
+			if(res.meta.state == 200){
+				$(this).parents("tr").remove()
+			}else{
+				alert(res.meta.msg)
+				
+			}
+		},'json')
+	})
+
+	$('tbody').on("click",".add_num",function(){
+		let goodsId = $(this).parents('tr').attr('goods_id')
+		let buyNum = parseInt($(this).prev().val());
+		buyNum=buyNum+1;
+		//发送异步请求
+		$.post('/api/v1/cart/update.jsp',{token,goodsId,buyNum},res=>{
+			if(res.meta.state == 200){
+				$(this).prev().val(buyNum)
+				let gs=parseInt($(this).prev().val())
+				let dj=parseInt($(this).parents('tr').find('.col3 span').text())
+				let zj=gs*dj
+				console.log(zj)
+				$(this).parents('tr').find('.col5').text('￥'+zj)
+				zjjg=0
+		$.each($('.mycart tbody tr'),(index,item)=>{
+		let x=$(item).find('.col5').text()
+		x=x.substr(1,x.length)
+		console.log(x)
+		zjjg+=parseInt(x)
+	})
+	$('#total').text(zjjg)
+			}else{
+				alert(res.meta.msg)
+			}
+		},'json')
+	})
+	//减少
+	$('tbody').on("click",".reduce_num",function(){
+		let goodsId = $(this).parents('tr').attr('goods_id')
+		let buyNum = $(this).next().val();
+		buyNum=buyNum-1;
+		//发送异步请求
+		$.post('/api/v1/cart/update.jsp',{goodsId,buyNum,token},res=>{
+			if(res.meta.state == 200){
+				$(this).next().val(buyNum)
+				let gs=parseInt($(this).next().val())
+				let dj=parseInt($(this).parents('td').prev().find('span').text())
+				let zj=gs*dj
+				console.log(zj)
+				$(this).parents('tr').find('.col5').text('￥'+zj)
+				zjjg=0
+		$.each($('.mycart tbody tr'),(index,item)=>{
+		let x=$(item).find('.col5').text()
+		x=x.substr(1,x.length)
+		console.log(x)
+		zjjg+=parseInt(x)
+	})
+	$('#total').text(zjjg)
+			}else{
+				alert(res.meta.msg)
+			}
+		},'json')
+	})
+	//输入框正则验证
+	$('tbody').on('blur','.amount',function(){
+		let goodsId = $(this).parents('tr').attr('goods_id')
+		let val = $(this).val();
+		let buyNum = parseInt(val.replace(/[^0-9]/g,''));
+		if(isNaN(buyNum)||buyNum==""||buyNum<1)buyNum=1;
+		
+		console.log(buyNum)
+		if(buyNum-0>10)buyNum=10;
+		val =$(this).val(buyNum)
+
+		$.post('/api/v1/cart/update.jsp',{goodsId,buyNum,token},res=>{
+			
+			if(res.meta.state == 200){
+				alert("操作成功")
+				//location.reload()
+				
+			}else{
+				alert(res.meta.msg)
+			}
+		},'json')
+	})
+	// 	$('body').on('click','.mycart',function(){
+	// 	zjjg=0
+	// 	$.each($('.mycart tbody tr'),(index,item)=>{
+	// 	let x=$(item).find('.col5').text()
+	// 	x=x.substr(1,x.length-1)
+	// 	console.log(x)
+	// 	zjjg+=parseInt(x)
+	// })
+	// $('#total').text(zjjg)
+	// })
+	$('.mycart tbody').on('input','.amount',function(){
+		let val=$(this).val()
+		$(this).val(val.replace(/[^0-9]/g,''))
+	})
+})
+</script>
+<script src="../js/登陆样式.js"></script>
