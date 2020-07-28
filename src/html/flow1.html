@@ -149,7 +149,7 @@
 </html>
 <script>
 	$(function(){
-		let zjjg
+		let zjjg=0
 	let token = localStorage.getItem('token')
 	$.post('/api/v1/cart/index.jsp',{token:token},res=>{
 		let html = ""
@@ -170,8 +170,10 @@
 					<td class="col5">￥<span value='${zongjia}'>${zongjia}</span></td>
 					<td class="col6"><a href="javascript:;" class="del">删除</a></td>
 				</tr>`
+				zjjg+=parseInt(zongjia)
 		})
 		$('.mycart tbody').html(html)
+		$('#total').text(zjjg)
 	}
 	,'json')
 	$('tbody').on("click",".del",function(){

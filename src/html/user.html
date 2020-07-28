@@ -435,15 +435,15 @@
 			<div class="menu_wrap">
 				<dl>
 					<dt>订单中心 <b></b></dt>
-					<dd><b>.</b><a href="">我的订单</a></dd>
+					<dd><b>.</b><a href="./order.html">我的订单</a></dd>
 					<dd><b>.</b><a href="">我的关注</a></dd>
-					<dd><b>.</b><a href="">浏览历史</a></dd>
+					<dd><b>.</b><a href="./goods.html">浏览历史</a></dd>
 					<dd><b>.</b><a href="">我的团购</a></dd>
 				</dl>
 
 				<dl>
 					<dt>账户中心 <b></b></dt>
-					<dd class="cur"><b>.</b><a href="">账户信息</a></dd>
+					<dd class="cur"><b>.</b><a href="./user.html">账户信息</a></dd>
 					<dd><b>.</b><a href="">账户余额</a></dd>
 					<dd><b>.</b><a href="">消费记录</a></dd>
 					<dd><b>.</b><a href="">我的积分</a></dd>
@@ -591,17 +591,42 @@
 	<!-- 底部版权 end -->
 </body>
 </html>
+<script src="../js/商品分类.js"></script>
 <script src="../js/登录样式.js"></script>
 <script>
 	$(function(){
+		let ccff=localStorage.getItem('ccfs')
+		let usname
+		let token
+		let pwd
+			if(ccff=='checked'){
+				usname=localStorage.getItem('uname')
+				pwd=localStorage.getItem('passwd')
+				token=localStorage.getItem('token')
+			}else{
+				usname=sessionStorage.getItem('uname')
+				pwd=sessionStorage.getItem('passwd')
+				token=sessionStorage.getItem('token')
+			}
+			console.log(uname,pwd,token)
+		$('.user_bd ul li').first().html(`
+			<label for="">当前账号：</label>
+			<strong>${usname}</strong>
+		`)
 		$('input[class=sbtn]').click(function(){
-			let uname=$('input[id=username]').val()
-			let pwd=$('input[id=pwd]').val()
-			let token=localStorage.getItem('token')
 		$.post('/api/v1/user/account.jsp',{uname,pwd,token},res=>{
 			console.log(res)
 			if(res.meta.state==200){
-				window.location.reload()
+				// let x=$('input[id="uname"]').val()
+				// console.log(x)
+				// if(ccff=='checked'){
+				// 	localStorage.setItem('uname',$('input[id="uname"]').val())
+				// 	localStorage.setItem('passwd',$('input[id="pwd"]').val())
+				// }else{
+				// 	sessionStorage.setItem('uname',$('input[id="uname"]').val())
+				// 	sessionStorage.setItem('passwd',$('input[id="pwd"]').val())
+				// }
+				// window.location.reload()
 			}else{
 				console.log(res.meta.msg)
 			}
