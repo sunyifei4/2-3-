@@ -140,7 +140,7 @@
 
 </body>
 </html>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
 <script>
 	$(function(){
 		$('.login_btn').click(function(e){
@@ -160,12 +160,7 @@
 		console.log(res)
 		if(res.meta.state==200){
 			//2.提示成功
-			swal({
-				title:'登陆成功',
-				text:'神龙教商城提示',
-				icon:"success",
-				button:"确定",
-			});
+			alert('登陆成功')
 			console.log($('.login_form .chb').attr('checked')=='checked')
 			if($('.login_form .chb').attr('checked')=='checked'){
 				localStorage.setItem('uname',uname)
@@ -181,12 +176,7 @@
 			//3.跳转到首页
 			location.href='./index.html'
 		}else{
-			swal({
-				title:res.meta.msg,
-				text:'神龙教商城提示',
-				icon:"error",
-				button:"确定",
-			});
+			alert('登陆失败')
 		}
 	},'json')
 		})

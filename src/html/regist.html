@@ -127,7 +127,7 @@
 </body>
 </html>
 <script src="../js/登录样式.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
 <script>
 	$(function(){
 		$('.yf_form').submit(function(e){
@@ -174,5 +174,48 @@
 				alert('密码确认失败请确认密码')
 			}
 		})
+        $(".login_form .login_btn").click(function(e) {
+            e.preventDefault()
+            let uname = $("input[name='username']").val()
+            let pwd = $("input[name='password']").val()
+            var repwd = $(".repwd").val();
+            let captcha = $("input[name='checkcode']").val()
+            let codeData = $("input[class='chb']").is(':checked')
+            let regeUname = /^([a-zA-Z0-9_\u4e00-\u9fa5]{3,20})$/
+            var regexpPwd = /^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/
+            if (!regeUname.test(uname)) {
+                alert("用户名是3-20位字符，可由中文、字母、数字和下划线组成");
+                return;
+            }
+            if (!regexpPwd.test(pwd)) {
+                alert("最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符");
+                return; //Qwer123*
+            }
+            if (pwd != repwd) {
+                alert("两次输入密码不一致!");
+                return;
+            }
+            if (!codeData) {
+                alert("请同意用户协议！");
+                return;
+            }
+            $.post("/api1/public/reg.jsp", {
+                uname,
+                pwd,
+                captcha
+            }, res => {
+                if (res.meta.state = 201) {
+                    alert(res.meta.msg)
+                    location.href = './login.html'
+                }
+            }, 'json')
+
+
+        })
+
+        //手机号注册
+        $('.mobile h3').click(function() {
+            location.href = "regist2.html"
+        })
 	})
 </script>

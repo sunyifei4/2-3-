@@ -9,7 +9,10 @@
 	<link rel="stylesheet" href="../style/index.css" type="text/css">
 	<link rel="stylesheet" href="../style/bottomnav.css" type="text/css">
 	<link rel="stylesheet" href="../style/footer.css" type="text/css">
+	<link rel="stylesheet" type="text/css" href="../style/cityPicker.css">
 
+	<script type="text/javascript" src="../js/cityData.js"></script>
+	<script type="text/javascript" src="../js/cityPicker.js"></script>
 	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 	<script type="text/javascript" src="../js/header.js"></script>
 	<script type="text/javascript" src="../js/index.js"></script>
@@ -19,13 +22,16 @@
 	<div class="topnav">
 		<div class="topnav_bd w1210 bc">
 			<div class="topnav_left" style="line-height: 30px; padding-left: 20px;">
-				定位：城市
+				定位：
+				<input type="text" id="cityChoice">
+				<input type="hidden" id="province" value="">
+				<input type="hidden" id="city" value="">
 			</div>
 			<div class="topnav_right fr">
 				<ul>
 					<li>您好，欢迎来到京西！[<a href="login.html">登录</a>] [<a href="regist.html">免费注册</a>] </li>
 					<li class="line">|</li>
-					<li>我的订单</li>
+					<li><a href='order.html'>我的订单</a></li>
 					<li class="line">|</li>
 					<li>客户服务</li>
 
@@ -968,7 +974,18 @@
 </html>
 <script>
 $(function(){
+	var cityPicker = new IIInsomniaCityPicker({
+        data: cityData,
+        target: '#cityChoice',
+        valType: 'k-v',
+        hideCityInput: '#city',
+        hideProvinceInput: '#province',
+        // callback: function(city_id){
+        //     alert(city_id);
+        // }
+    });
 
+    cityPicker.init();
 
 	//二，热卖商品
 

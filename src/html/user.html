@@ -595,11 +595,11 @@
 <script src="../js/登录样式.js"></script>
 <script>
 	$(function(){
-		let ccff=localStorage.getItem('ccfs')
+		let ccfs=localStorage.getItem('ccfs')
 		let usname
 		let token
 		let passwd
-			if(ccff=='checked'){
+			if(ccfs==1){
 				usname=localStorage.getItem('uname')
 				passwd=localStorage.getItem('passwd')
 				token=localStorage.getItem('token')
@@ -623,7 +623,7 @@
 			if(res.meta.state==200){
 				let x=$('input[id="uname"]').val()
 				console.log(x)
-				if(ccff=='checked'){
+				if(ccfs==1){
 					localStorage.setItem('uname',$('input[id="uname"]').val())
 					localStorage.setItem('passwd',$('input[id="pwd"]').val())
 				}else{

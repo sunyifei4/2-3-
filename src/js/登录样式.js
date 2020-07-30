@@ -1,7 +1,7 @@
 //登录样式
 let dlyh
-let ccff=localStorage.getItem('ccff')
-if(ccff=='checked'){
+let ccfs=localStorage.getItem('ccfs')
+if(ccfs==1){
     dlyh=localStorage.getItem('uname')
 }else{
     dlyh=sessionStorage.getItem('uname')
@@ -13,7 +13,7 @@ if(!dlyh==''){
             <ul>
                 <li>您好，欢迎来到京西！[<a href="user.html">${dlyh}</a>] [<a class='tc' href="index.html">退出</a>] </li>
                 <li class="line">|</li>
-                <li>我的订单</li>
+                <li><a href='order.html'>我的订单</a></li>
                 <li class="line">|</li>
                 <li>客户服务</li>
 
@@ -23,7 +23,7 @@ if(!dlyh==''){
     $('.topnav_right').on('click','.tc',function(e){
         let eObj=e||window.event
         eObj.preventDefault()
-        if(ccff=='checked'){
+        if(ccfs==1){
             dlyh=localStorage.setItem('uname','')
         }else{
             dlyh=sessionStorage.setItem('uname','')
