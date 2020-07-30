@@ -1036,7 +1036,7 @@ $('.goodslist ul').html(`<img src="../images/loading${img}.gif" />`)
         })
         $('.goodslist ul').html(html)
 	},'json')
-	$('.goodslist').on('click','a',function(e){
+	$('.goodslist ul').on('click','a',function(e){
 			let eObj=e||window.event
 			eObj.preventDefault()
 			localStorage.setItem('goodsId',$(this).parents('li').attr('name'))

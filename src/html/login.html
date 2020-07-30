@@ -166,7 +166,7 @@
 				icon:"success",
 				button:"确定",
 			});
-			console.log(pwd)
+			console.log($('.login_form .chb').attr('checked')=='checked')
 			if($('.login_form .chb').attr('checked')=='checked'){
 				localStorage.setItem('uname',uname)
 				localStorage.setItem('passwd',pwd)

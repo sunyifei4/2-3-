@@ -5,7 +5,7 @@ pagessize=3
 		let hnml=''
 		$.each(res.data.list,(index,item)=>{
 			hnml+=`
-						<li>
+						<li name='${item.goods_id}'>
 							<dl>
 								<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
 								<dd><a href="">${item.goods_name}</a></dd>
@@ -23,7 +23,7 @@ pagessize=3
 			if(item.goods_id==localStorage.getItem('goodsId')){
 				if(localStorage.getItem('goodsId')!=''){
 					$('.viewd .leftbar_wrap').html(`
-								<dl>
+								<dl name='${item.goods_id}'>
 									<dt><a href=""><img src="http://tmp00001.zhaodashen.cn/${item.goods_img}" alt="" /></a></dt>
 									<dd><a href="">${item.goods_name}</a></dd>
 								</dl>
@@ -32,3 +32,11 @@ pagessize=3
 			}
 		})
 	},'json')
+	$('.newgoods .leftbar_wrap ul').on('click','li',function(){
+		localStorage.setItem('goodsId',$(this).attr('name'))
+		window.location.href='./goods.html'
+	})
+	$('.viewd .leftbar_wrap').on('click','dl',function(){
+		localStorage.setItem('goodsId',$(this).attr('name'))
+		window.location.href='./goods.html'
+	})

@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="../style/header.css" type="text/css">
 	<link rel="stylesheet" href="../style/success.css" type="text/css">
 	<link rel="stylesheet" href="../style/footer.css" type="text/css">
+	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 </head>
 <body>
 	<!-- 顶部导航 start -->
@@ -55,7 +56,7 @@
 			<h2>订单提交成功</h2>
 		</div>
 		<div class="success_bd">
-			<p><span></span>订单提交成功，我们将及时为您处理</p>
+			<p><span></span>订单提交成功，我们将及时为您处理3</p>
 			
 			<p class="message">完成支付后，你可以 <a href="./order.html">查看订单状态</a>  <a href="./index.html">继续购物</a> <a href="">问题反馈</a></p>
 		</div>
@@ -92,3 +93,31 @@
 </body>
 </html>
 <script src="../js/登陆样式.js"></script>
+<script>
+	$(function(){
+	let x=2
+	let ddbh
+	let zjjg=localStorage.getItem('zjjg')
+	let token=localStorage.getItem('token')
+	setInterval(() => {
+		$('.success_bd').html(`<p><span></span>订单提交成功，我们将及时为您处理${x}</p>
+			<p class="message">完成支付后，你可以 <a href="./order.html">查看订单状态</a>  <a href="./index.html">继续购物</a> <a href="">问题反馈</a></p>`)
+			x--
+	}, 1000);
+	$.get('/api/v1/order/index.jsp',{delete:2,token},res=>{
+		if(res.meta.state==200){
+			$.each(res.data,(index,item)=>{
+				console.log(zjjg)
+				console.log(item.goods_amount)
+			if(parseInt(zjjg)==parseInt(item.goods_amount)){
+				ddbh=item.order_id
+				setTimeout(() => {
+					location.href=`http://kg.zhaodashen.cn/v1/alipay/pagepay/pagepay.php?trade_no=${ddbh}&amount=${zjjg}`
+				}, 3000);
+			}
+			})
+		}
+	},'json')
+	})
+	
+</script>

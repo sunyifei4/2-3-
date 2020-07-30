@@ -174,6 +174,7 @@
 		})
 		$('.mycart tbody').html(html)
 		$('#total').text(zjjg)
+		localStorage.setItem('zjjg',zjjg)
 	}
 	,'json')
 	$('tbody').on("click",".del",function(){
@@ -191,6 +192,7 @@
 		let z=$(this).parent().prev().text()
 		zjjg-=parseInt(z.substr(1,z.length))
 	$('#total').text(zjjg)
+	localStorage.setItem('zjjg',zjjg)
 	})
 
 	$('tbody').on("click",".add_num",function(){
@@ -212,6 +214,7 @@
 		x=x.substr(1,x.length)
 		console.log(x)
 		zjjg+=parseInt(x)
+		localStorage.setItem('zjjg',zjjg)
 	})
 	$('#total').text(zjjg)
 			}else{
@@ -239,6 +242,7 @@
 		x=x.substr(1,x.length)
 		console.log(x)
 		zjjg+=parseInt(x)
+		localStorage.setItem('zjjg',zjjg)
 	})
 	$('#total').text(zjjg)
 			}else{

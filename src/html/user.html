@@ -598,35 +598,39 @@
 		let ccff=localStorage.getItem('ccfs')
 		let usname
 		let token
-		let pwd
+		let passwd
 			if(ccff=='checked'){
 				usname=localStorage.getItem('uname')
-				pwd=localStorage.getItem('passwd')
+				passwd=localStorage.getItem('passwd')
 				token=localStorage.getItem('token')
 			}else{
 				usname=sessionStorage.getItem('uname')
-				pwd=sessionStorage.getItem('passwd')
+				passwd=sessionStorage.getItem('passwd')
 				token=sessionStorage.getItem('token')
 			}
-			console.log(uname,pwd,token)
+			console.log(usname,passwd,token)
 		$('.user_bd ul li').first().html(`
 			<label for="">当前账号：</label>
 			<strong>${usname}</strong>
 		`)
 		$('input[class=sbtn]').click(function(){
+		let uname=$('#uname').val()
+		let pwd=$('#pwd').val()
+		console.log(uname)
+		console.log(pwd)
 		$.post('/api/v1/user/account.jsp',{uname,pwd,token},res=>{
 			console.log(res)
 			if(res.meta.state==200){
-				// let x=$('input[id="uname"]').val()
-				// console.log(x)
-				// if(ccff=='checked'){
-				// 	localStorage.setItem('uname',$('input[id="uname"]').val())
-				// 	localStorage.setItem('passwd',$('input[id="pwd"]').val())
-				// }else{
-				// 	sessionStorage.setItem('uname',$('input[id="uname"]').val())
-				// 	sessionStorage.setItem('passwd',$('input[id="pwd"]').val())
-				// }
-				// window.location.reload()
+				let x=$('input[id="uname"]').val()
+				console.log(x)
+				if(ccff=='checked'){
+					localStorage.setItem('uname',$('input[id="uname"]').val())
+					localStorage.setItem('passwd',$('input[id="pwd"]').val())
+				}else{
+					sessionStorage.setItem('uname',$('input[id="uname"]').val())
+					sessionStorage.setItem('passwd',$('input[id="pwd"]').val())
+				}
+				window.location.reload()
 			}else{
 				console.log(res.meta.msg)
 			}

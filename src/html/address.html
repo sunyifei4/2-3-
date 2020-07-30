@@ -652,9 +652,11 @@
 		$('.address_hd').on('click','.mrdz',function(e){
 			let eObj=e||window.event
 			eObj.preventDefault()
+			address_id=$(this).parents('dl').attr('name')
 			localStorage.setItem('mryh',($(this).parents('dl').find('dt').text()).split(' ')[0])
 			localStorage.setItem('mrdz',($(this).parents('dl').find('dt').text()).split(' ')[1])
 			localStorage.setItem('mrdh',($(this).parents('dl').find('dt').text()).split(' ')[2])
+			$.post('/api/v1/address/default.jsp',{token,address_id},res=>{})
 		})
 		$('.address_hd').on('click','.deld',function(e){
 			let eObj=e||window.event
@@ -732,10 +734,11 @@
 			username=$('input[name=shr]').val()
 			address=$('input[name=xxdz]').val()
 			mobile=$('input[name=sjhm]').val()
-			if($('form[name=address_form] .check').attr('checked')==1){
+			if($('form[name=address_form] .check').attr('checked')=='checked'){
 				localStorage.setItem('mryh',username)
 				localStorage.setItem('mrdz',address)
 				localStorage.setItem('mrdh',mobile)
+			$.post('/api/v1/address/default.jsp',{token,address_id},res=>{})
 			}else{
 				sessionStorage.setItem('mryh',username)
 				sessionStorage.setItem('mrdz',address)
