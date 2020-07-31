@@ -345,7 +345,7 @@
 	<!-- 底部版权 end -->
 </body>
 </html>
-<script src="../js/登陆样式.js"></script>
+<script src="../js/登录样式.js"></script>
 <script>
 	$(function(){
 		let address_id
@@ -538,9 +538,22 @@
 		$.post('/api/v1/order/create.jsp',{token},res=>{
 			console.log(res)
 			if(res.meta.state==201){
-				location.href='./flow3.html'
+				$.post('/api/v1/cart/index.jsp',{token},res=>{
+					console.log(res)
+					if(res.meta.state==200){
+						$.each(res.data,(index,item)=>{
+						let goods_id=item.goods_id
+						$.post('/api/v1/cart/delete.jsp',{token,goods_id},res=>{
+
+						},'json')
+					})
+					}
+				},'json')
+				localStorage.setItem('ddbh',res.data.order_sn)
+				location.href=`./flow3.html`
 			}
 		},'json')
 	})
 	})
 </script>
+<script src='../js/先登录.js'></script>

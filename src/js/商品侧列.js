@@ -1,4 +1,6 @@
-pagessize=3
+    let img = Math.floor(Math.random() * (10-1+1)+1)
+	$('.newgoods .leftbar_wrap ul').html(`<img src="../images/loading${img}.gif" style="height:150px;width:150px" />`)
+	pagessize=3
 	totalspage=Math.ceil(localStorage.getItem('zys')/pagessize)
 	pagesno=Math.floor(Math.random()*(totalspage-1+1)+1)
 	$.get('/api/v1/goods/index.jsp',{pageno:pagesno,pagesize:pagessize},res=>{

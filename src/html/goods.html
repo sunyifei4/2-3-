@@ -1065,7 +1065,7 @@
 		</p>
 	</div>
 	<!-- 底部版权 end -->
-
+	<a class="to-top" style="box-sizing: border-box;borde">返回顶部</a>
 	<script type="text/javascript">
 		document.execCommand("BackgroundImageCache", false, true);
 	</script>
@@ -1075,6 +1075,14 @@
 <script src="../js/登录样式.js"></script>
 <script>
 	$(function(){
+		$('.to-top').toTop();
+		$('.to-top').css('background','#9090ff');
+		$('.to-top').css('height','50px');
+		$('.to-top').css('width','100px');
+		$('.to-top').css('padding-top','15px');
+		$('.to-top').css('text-align','center');
+		$('.to-top').css('border-radius','15px');
+		$('.to-top').css('color','white');
 		let buyNum=0
 		let token=localStorage.getItem('token')
 		let goodsId=localStorage.getItem('goodsId')
@@ -1459,3 +1467,7 @@
 	
 </script>
 <script src="../js/商品侧列.js"></script>
+<script src="../js/先登录.js"></script>
+<script src="../js/搜索.js"></script>
+<script src="../js/jquery.toTop.js"></script>
+<script src="../js/jquery.toTop.min.js"></script>

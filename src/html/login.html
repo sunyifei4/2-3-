@@ -58,6 +58,7 @@
 						<li>
 							<label for="">密码：</label>
 							<input type="password" class="txt" name="password" />
+							<img src="../images/可见.jpg" class='jbj' width="20px" alt="">
 							<a href="">忘记密码?</a>
 						</li>
 						<li class="checkcode">
@@ -179,6 +180,15 @@
 			alert('登陆失败')
 		}
 	},'json')
+		})
+		$('.login_form').on('click','.jbj',function(){
+			if($('input[name="password"]').attr('type')=='password'){
+				$('input[name="password"]')[0].type = "text";  
+				$(this).attr('src','../images/不可见.jpg')
+			}else{
+				$('input[name="password"]')[0].type = "password";  
+				$(this).attr('src','../images/可见.jpg')
+			}
 		})
 	})
 	

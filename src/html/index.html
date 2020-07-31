@@ -10,12 +10,15 @@
 	<link rel="stylesheet" href="../style/bottomnav.css" type="text/css">
 	<link rel="stylesheet" href="../style/footer.css" type="text/css">
 	<link rel="stylesheet" type="text/css" href="../style/cityPicker.css">
+	<link rel="stylesheet" href="../style/返回顶部.css" type="text/css">
 
 	<script type="text/javascript" src="../js/cityData.js"></script>
 	<script type="text/javascript" src="../js/cityPicker.js"></script>
 	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 	<script type="text/javascript" src="../js/header.js"></script>
 	<script type="text/javascript" src="../js/index.js"></script>
+	<script src="../js/jquery.toTop.js"></script>
+	<script src="../js/jquery.toTop.min.js"></script>
 </head>
 <body>
 	<!-- 顶部导航 start -->
@@ -969,11 +972,12 @@
 		</p>
 	</div>
 	<!-- 底部版权 end -->
-
+	<a class="to-top">返回顶部</a>
 </body>
 </html>
 <script>
 $(function(){
+	$('.to-top').toTop();
 	var cityPicker = new IIInsomniaCityPicker({
         data: cityData,
         target: '#cityChoice',

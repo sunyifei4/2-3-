@@ -10,11 +10,14 @@
 	<link rel="stylesheet" href="../style/common.css" type="text/css">
 	<link rel="stylesheet" href="../style/bottomnav.css" type="text/css">
 	<link rel="stylesheet" href="../style/footer.css" type="text/css">
+	<link rel="stylesheet" href="../style/返回顶部.css" type="text/css">
 	
 	<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
 	<script type="text/javascript" src="../js/header.js"></script>
 	<script type="text/javascript" src="../js/list.js"></script>
 	<script type="text/javascript" src="../js/utils.js"></script>
+	<script type="text/javascript" src="../js/jquery.toTop.js"></script>
+	<script type="text/javascript" src="../js/jquery.toTop.min.js"></script>
 </head>
 <body>
 	<!-- 顶部导航 start -->
@@ -807,9 +810,9 @@
 		</p>
 	</div>
 	<!-- 底部版权 end -->
+	<a class="to-top">返回顶部</a>
 </body>
 </html>
-
 <script src="../js/登录样式.js"></script>
 <script>
 	$(function(){
@@ -818,8 +821,16 @@
 		let totalpage=0
 		let pagesize=8
 		let pageno=1
-		let keywords = getParams('k')
-
+		let ssnr=localStorage.getItem('ssnr')
+		let keywords
+		if(ssnr==''){
+			console.log(ssnr)
+			keywords = getParams('k')
+		}else{
+			keywords = ssnr
+			localStorage.setItem('ssnr','')
+		}
+		$('.to-top').toTop();
 		getListData(pageno,pagesize)
 		//分页
 		$('.page').on('click','a',function(e){
@@ -908,7 +919,7 @@
 					<a href="" class="skipsearch" href="javascript:;">确定</a>
 				</span>
 			`
-
+			
 				//判断是否放
 				if (res.data.total<1){
 					$('.page').html('')

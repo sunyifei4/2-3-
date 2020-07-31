@@ -1,0 +1,10 @@
+.to-top{
+    background: #9595ff;
+    width: 100px;
+    height: 50px;
+    padding-top: 16px;
+    padding-left: 25px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    color: white;
+}

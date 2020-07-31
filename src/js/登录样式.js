@@ -6,7 +6,6 @@ if(ccfs==1){
 }else{
     dlyh=sessionStorage.getItem('uname')
 }
-console.log(sessionStorage.getItem('uname'))
 if(!dlyh==''){
     let hyml=''
     hyml+=`
@@ -41,6 +40,7 @@ if(!dlyh==''){
         let eObj=e||window.event
         eObj.preventDefault()
         localStorage.setItem('uname','')
+        localStorage.setItem('token','')
         window.location.reload()
     })
 }

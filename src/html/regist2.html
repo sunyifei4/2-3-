@@ -168,68 +168,112 @@
 		captchaObj.onReady(function () {
 			$("#wait").hide();
 		});
-
-		// 获取验证码
+		//获取验证码
 		$('.captchaBtn').click(function() {
-			// 验证
-			let mobile = $('input[name=mobile]').val()
-			if (!/^1\d{10}$/.test(mobile)) return alert('手机号有误')
+			let mobile=$(this).parents('.login_form').find('input[name="mobile"]').val()
+			console.log(mobile)
+			if(!/^1\d{10}$/.test(mobile)) return alert('请输入正确的手机号码')
 			var result = captchaObj.getValidate();
-			if (!result) return alert('请完成验证');
-			// 倒计时效果
-			t = setInterval(function() {
+			if (!result) return alert('请先完成验证');
+			let t=setInterval(function(){
 				num--
-				if (num == 0) {
+				if(num==0){
 					clearInterval(t)
-					num = 60
+					num=60
 					$('.captchaBtn').text(`获取验证码`)
 					$('.captchaBtn').removeAttr('disabled')
-					$('.captchaBtn').css({cursor:'pointer', width: '118px'})
-				} else {
+					$('.captchaBtn').css({cursor:'default', width: '118px'})
+				}else{
 					$('.captchaBtn').text(`重发验证码（${num}）`)
 					$('.captchaBtn').attr('disabled', 'disabled')
 					$('.captchaBtn').css({cursor:'default', width: '152px'})
 				}
-			}, 1000)
-			// 发送接口请求
-			$.post('/api/v1/public/sendMsg.jsp', {mobile}, res=>{
-				// console.log(res)
-				if (res.meta.state != 201)
-				{
-					alert(res.meta.msg)
-				}  
-			}, 'json')
-		})
-
-		// 提交创建
-		$('.login_form button.createBtn').click(function () {
-			// 验证
-			let mobile = $('input[name=mobile]').val()
-			if (!/^1\d{10}$/.test(mobile)) return alert('手机号有误')
-			var result = captchaObj.getValidate();
-			if (!result) return alert('请完成验证');
-			let pwd = $('input[name=pwd]').val()
-			let code = $('input[name=captcha]').val()
-			if (!/^\d{4}$/.test(code)) return alert('验证码有误')
-			
-			// 验证通过发送异步请求 
-			$.post('/api/v1/public/reg2.jsp', {mobile,pwd,code}, res=>{
-				// console.log(res)
-				if (res.meta.state == 201)
-				{
-					alert('注册成功，请登录...')
-					location.href = './login.html'
-				} else {
+			},1000)
+			$.post('/api/v1/public/sendMsg.jsp',{mobile},res=>{
+				console.log(res)
+				if(res.meta.state!=201){
 					alert(res.meta.msg)
 				}
-			}, 'json')
+			},'json')
 		})
-		// 更多接口说明请参见：http://docs.geetest.com/install/client/web-front/
+		// 获取验证码
+		// $('.captchaBtn').click(function() {
+		// 	// 验证
+		// 	let mobile = $('input[name=mobile]').val()
+		// 	if (!/^1\d{10}$/.test(mobile)) return alert('手机号有误')
+		// 	var result = captchaObj.getValidate();
+		// 	if (!result) return alert('请完成验证');
+		// 	// 倒计时效果
+		// 	t = setInterval(function() {
+		// 		num--
+		// 		if (num == 0) {
+		// 			clearInterval(t)
+		// 			num = 60
+		// 			$('.captchaBtn').text(`获取验证码`)
+		// 			$('.captchaBtn').removeAttr('disabled')
+		// 			$('.captchaBtn').css({cursor:'pointer', width: '118px'})
+		// 		} else {
+		// 			$('.captchaBtn').text(`重发验证码（${num}）`)
+		// 			$('.captchaBtn').attr('disabled', 'disabled')
+		// 			$('.captchaBtn').css({cursor:'default', width: '152px'})
+		// 		}
+		// 	}, 1000)
+		// 	// 发送接口请求
+		// 	$.post('/api/v1/public/sendMsg.jsp', {mobile}, res=>{
+		// 		// console.log(res)
+		// 		if (res.meta.state != 201)
+		// 		{
+		// 			alert(res.meta.msg)
+		// 		}  
+		// 	}, 'json')
+		// })
+
+	//提交创建
+	$('.login_form button.createBtn').click(function () {
+		let mobile=$('input[name=mobile]').val()
+		if (!/^1\d{10}$/.test(mobile)) return alert('手机号有误')
+		var result = captchaObj.getValidate();
+		if (!result) return alert('请完成验证');
+		let pwd = $('input[name=pwd]').val()
+		let code = $('input[name=captcha]').val()
+		if (!/^\d{4}$/.test(code)) return alert('验证码有误')
+		$.post('/api/v1/public/reg2.jsp',{mobile,pwd,code},res=>{
+			if(res.meta.state==201){
+				alert('注册成功，请登录...')
+				location.href='./login.html'
+			}else{
+				alert(res.meta.msg)
+			}
+		},'json')
+	})
+
+	// 	// 提交创建
+		// $('.login_form button.createBtn').click(function () {
+		// 	// 验证
+		// 	let mobile = $('input[name=mobile]').val()
+		// 	if (!/^1\d{10}$/.test(mobile)) return alert('手机号有误')
+		// 	var result = captchaObj.getValidate();
+		// 	if (!result) return alert('请完成验证');
+		// 	let pwd = $('input[name=pwd]').val()
+		// 	let code = $('input[name=captcha]').val()
+		// 	if (!/^\d{4}$/.test(code)) return alert('验证码有误')
+			
+			// 验证通过发送异步请求 
+			// $.post('/api/v1/public/reg2.jsp', {mobile,pwd,code}, res=>{
+			// 	// console.log(res)
+			// 	if (res.meta.state == 201)
+			// 	{
+			// 		alert('注册成功，请登录...')
+			// 		location.href = './login.html'
+			// 	} else {
+			// 		alert(res.meta.msg)
+			// 	}
+			// }, 'json')
+		// })
 		window.gt = captchaObj;
 	};
 
 
-	// 默认即可验证码需要的别管。
 	$.ajax({
 		url: "https://www.geetest.com/demo/gt/register-slide?t=" + (new Date()).getTime(), // 加随机数防止缓存
 		type: "get",
@@ -238,9 +282,6 @@
 
 			$('#text').hide();
 			$('#wait').show();
-			// 调用 initGeetest 进行初始化
-			// 参数1：配置参数
-			// 参数2：回调，回调的第一个参数验证码对象，之后可以使用它调用相应的接口
 			initGeetest({
 				// 以下 4 个配置参数为必须，不能缺少
 				gt: data.gt,
@@ -251,8 +292,6 @@
 				product: "popup", // 产品形式，包括：float，popup
 				width: "300px",
 				https: true
-
-				// 更多配置参数说明请参见：http://docs.geetest.com/install/client/web-front/
 			}, handler);
 		}
 	});

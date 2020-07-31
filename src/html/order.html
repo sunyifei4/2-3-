@@ -488,11 +488,17 @@
 					<thead>
 						<tr>
 							<th width="10%">订单号</th>
-							<th width="20%">订单商品</th>
-							<th width="10%">收货人</th>
-							<th width="20%">订单金额</th>
-							<th width="20%">下单时间</th>
-							<th width="10%">订单状态</th>
+							<th width="5%">订单状态</th>
+							<th width="5%">配送状态</th>
+							<th width="5%">支付状态</th>
+							<th width="5%">订单金额</th>
+							<th width="10%">下单时间</th>
+							<th width="5%">收货人</th>
+							<th width="5%">省份</th>
+							<th width="5%">市区</th>
+							<th width="5%">县</th>
+							<!-- <th width="10%">收获地址</th> -->
+							<th width="5%">联系电话</th>
 							<th width="10%">操作</th>
 						</tr>
 					</thead>
@@ -628,23 +634,43 @@
 </html>
 <script src='../js/登录样式.js'></script>
 <script src='../js/商品分类.js'></script>
+<script src='../js/先登录.js'></script>
 <script>
 	$(function(){
 		let token=localStorage.getItem('token')
 		$.get('/api/v1/order/index.jsp',{delete:2,token},res=>{
+			let orderStatus = ['未确认', '已确认', '已取消', '无效', '退货']
+			let shippingStatus = ['未发货', '已发货', '已收货', '备货中']
+			let payStatus = ['<font color=red>未付款</font>', '付款中', '<font color=green>已付款</font>']
 			let html=''
 			console.log(res)
 			$.each(res.data,(index,item)=>{
+				if (payStatus[item.pay_status] != '<font color=green>已付款</font>')
+				{
+					payHtml = `
+					<a href="http://kg.zhaodashen.cn/v1/alipay/pagepay/pagepay.jsp?trade_no=${item.order_sn}&amount=${item.order_amount}">
+					付款 |	
+					</a>
+					`
+				}
 				html+=`
 				<tr>
-					<td><a href="">${item.order_id}</a></td>
-					<td><a href=""><img src="../images/order1.jpg" alt="" /></a></td>
-					<td>${item.consignee}</td>
-					<td>￥${item.goods_amount} 货到付款</td>
-					<td>${item.confirm_time_name}</td>
-					<td>已取消</td>
-					<td><a href="" com="快递公司" no="快递单号" >查看物流</a> | <a class='zhyg' name='${item.order_id}' href="">删除</a></td>
-				</tr>
+					<td>${item.order_sn}</td>
+						<td>${orderStatus[item.order_status]}</td>
+						<td>${shippingStatus[item.shipping_status]}</td>
+						<td>${payStatus[item.pay_status]}</td>
+						<td>${item.order_amount}</td>
+						<td>${item.add_time_name}</td>
+						<td>${item.consignee}</td>
+						<td>${item.province}</td>
+						<td>${item.city}</td>
+						<td>${item.district}</td>
+						<td>${item.tel}</td>
+						<td>
+							<a href="javascript:;" com="${item.com}" no="${item.no}" class="wl" >物流</a> |
+							${payHtml}
+							<a class='zhyg' name='${item.order_id}' href="">删除</a></td>
+					</tr>
 				`
 			})
 			$('.orders tbody').html(html)
@@ -661,5 +687,22 @@
 				}
 			},'json')
 		})
+		// 查看物流
+	$('table').on('click', '.wl', function(res) {
+		let no = $(this).attr('no')
+		// console.log(no)
+		// 异步请求后期数据
+		$.get(`https://biz.trace.ickd.cn/auto/${no}?mailNo=${no}`, {}, res=>{
+			// console.log(res)
+			let html = ''
+			$.each(res.data, (index, item) => {
+				// console.log(item)
+				html += `${item.time}  ${item.context} \r\n`
+			})
+
+			alert(html)
+		}, 'json')
+	})
 	})
 </script>
+<script src="../js/搜索.js"></script>
